@@ -6,11 +6,12 @@ globalVariables(c("CF", "lower", "overlap", "upper", "vars"))
 #' @description Drawing the coefficient plots from either model result or coefficient table.
 #'
 #' @param x The estimated model result object.
-#' @param direct Import the result directly from the table (boulean). If \code{FALSE} (default), coefficients imported from estimated model object (\code{\link[stats]{coef}} and \code{\link[stats]{confint}} must be applicable). If \code{TRUE}, coefficients imported directly from coefficients table (rows=variables, columns=(coefficient, lower CI, upper CI), row names = variable names).
+#' @param direct Import the result directly from the table (boulean). If \code{FALSE} (default), coefficients imported from estimated model object (\code{\link[stats]{coef}} and \code{\link[lmtest]{coefci}} must be applicable). If \code{TRUE}, coefficients imported directly from coefficients table (rows=variables, columns=(coefficient, lower CI, upper CI), row names = variable names).
 #' @param order.variable Order of coefficients in the plot. \code{"original"} (default) preserves the original order of the variable. \code{"coeforder"} plots by the discending order of the coefficient size. \code{"asis"} use the default \code{ggplot} setting.
 #' @param odds Use odds ratio instead of coefficient in the output (boulean). The default is \code{FALSE}. If \code{TRUE}, the exponent of the coefficients will be plotted.
 #' @param show.confint Show confidence interval (boulean). The default is \code{TRUE}.
 #' @param percent.confint The percentage used for confidence interval (numeric: 0-100). The default is \code{95}.
+#' @param vcov.confint The alternative variance-covariance matrix to be used for the model object \code{x}. Ignored if \code{NULL} (default) or \code{direct = TRUE}.
 #' @param drop.intercept Drop the intercept from the plot (boulean). If \code{FALSE} (default), intercept included in the plot.
 #' @param drop.intercept.names The name(s) of intercept (character/character vector). Needed if \code{drop.intercept} is \code{TRUE}. This is used to identify and eliminate intercept variables from the output. Default value is \code{"(Intercept)"}.
 #' @param drop.variable.names The name(s) of additional variables to drop (character/character vector) from the ouput. The default is \code{NULL}.
@@ -20,6 +21,7 @@ globalVariables(c("CF", "lower", "overlap", "upper", "vars"))
 #' @param confint.linewidth The line width of confidence interval outputs (numeric). The default is \code{0.5}.
 #' @param confint.height The height of the vertical line added to the edge of confidence interval outputs. The default is \code{0.2}.
 #' @param overlap.x.list The list of additional estimated model result to be overlapped with the first result (list). Each element of the list must have the same set of variables and same class as the \code{x}. The default is \code{NULL}.
+#' @param overlap.vcov.confint.list The list of alternative variance-covariance matrix to be used for the corresponding model object in \code{overlap.x.list}. Ignored if \code{NULL} (default) or \code{direct = TRUE}.
 #' @param overlap.class.names The set of names that identifies overlapping \code{x}s (character vector). Needed if \code{overlap.x.list} is not \code{NULL}. The length of the vector must correspond with the length of \code{overlap.x.list} + 1. The first element of the vector is the name for \code{x}, then from the second element, the name order must correspond with the order in \code{overlap.x.list}.
 #' @param overlap.gapwidth The gap between overlapped ouputs (number). The default value is \code{0.5}.
 #' @param overlap.shape.index The index of shapes for overlapped point ouputs. Must be in the same length as \code{overlap.x.list} + 1. The first element of the vector is the shape for \code{x}, then from the second element, the order must correspond with the order in \code{overlap.x.list}. If \code{NULL}, \code{point.shape} is applied to all classes.
@@ -99,7 +101,7 @@ globalVariables(c("CF", "lower", "overlap", "upper", "vars"))
 #' @references \url{http://www.surefoss.org/dataanalysis/plotting-odds-ratios-aka-a-forrestplot-with-ggplot2/}
 #'
 #' @importFrom stats coef
-#' @importFrom stats confint
+#' @importFrom lmtest coefci
 #' @importFrom stats reorder
 #' @import MASS
 #' @importFrom ggplot2 theme
@@ -129,6 +131,7 @@ plot_coef<-function(x,
                     odds=FALSE,
                     show.confint = TRUE,
                     percent.confint = 95,
+                    vcov.confint = NULL,
                     drop.intercept=FALSE,
                     drop.intercept.names = "(Intercept)",
                     drop.variable.names = NULL,
@@ -138,6 +141,7 @@ plot_coef<-function(x,
                     confint.linewidth = 0.5,
                     confint.height = 0.2,
                     overlap.x.list = NULL,
+                    overlap.vcov.confint.list = NULL,
                     overlap.class.names = NULL,
                     overlap.gapwidth = 0.5,
                     overlap.shape.index = NULL,
@@ -172,13 +176,16 @@ if (direct==TRUE){
   }
 } else if (direct==FALSE) {
   pci <- percent.confint/100
-  tmp <- data.frame(cbind(coef(x), confint(x, level = pci)))
+  tmp <- data.frame(cbind(coef(x), coefci(x, level = pci, vcov. = vcov.confint)))
   originalx <- tmp
   varnames <- row.names(originalx)
   facetnames <- facet.category.names
   if (is.null(overlap.x.list)==FALSE) {
+    if(is.null(overlap.vcov.confint.list)==TRUE){
+      overlap.vcov.confint.list <- vector("list", length(overlap.x.list))
+    }
     for(i in 1:length(overlap.x.list)){
-      tmp <- rbind(tmp,data.frame(cbind(coef(overlap.x.list[[i]]), confint(overlap.x.list[[i]], level = pci))))
+      tmp <- rbind(tmp,data.frame(cbind(coef(overlap.x.list[[i]]), coefci(overlap.x.list[[i]], level = pci, vcov. = overlap.vcov.confint.list[[i]]))))
     }
     varnames <- rep(row.names(originalx),length(overlap.x.list)+1)
     facetnames <- rep(facet.category.names,length(overlap.x.list)+1)

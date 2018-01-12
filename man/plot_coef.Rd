@@ -5,10 +5,11 @@
 \title{Plotting Coefficients}
 \usage{
 plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
-  show.confint = TRUE, percent.confint = 95, drop.intercept = FALSE,
-  drop.intercept.names = "(Intercept)", drop.variable.names = NULL,
-  point.shape = 16, point.size = 1.5, confint.linetype = 1,
-  confint.linewidth = 0.5, confint.height = 0.2, overlap.x.list = NULL,
+  show.confint = TRUE, percent.confint = 95, vcov.confint = NULL,
+  drop.intercept = FALSE, drop.intercept.names = "(Intercept)",
+  drop.variable.names = NULL, point.shape = 16, point.size = 1.5,
+  confint.linetype = 1, confint.linewidth = 0.5, confint.height = 0.2,
+  overlap.x.list = NULL, overlap.vcov.confint.list = NULL,
   overlap.class.names = NULL, overlap.gapwidth = 0.5,
   overlap.shape.index = NULL, overlap.linetype.index = NULL,
   overlap.legend.position = "bottom", facet.category.names = NULL,
@@ -18,7 +19,7 @@ plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
 \arguments{
 \item{x}{The estimated model result object.}
 
-\item{direct}{Import the result directly from the table (boulean). If \code{FALSE} (default), coefficients imported from estimated model object (\code{\link[stats]{coef}} and \code{\link[stats]{confint}} must be applicable). If \code{TRUE}, coefficients imported directly from coefficients table (rows=variables, columns=(coefficient, lower CI, upper CI), row names = variable names).}
+\item{direct}{Import the result directly from the table (boulean). If \code{FALSE} (default), coefficients imported from estimated model object (\code{\link[stats]{coef}} and \code{\link[lmtest]{coefci}} must be applicable). If \code{TRUE}, coefficients imported directly from coefficients table (rows=variables, columns=(coefficient, lower CI, upper CI), row names = variable names).}
 
 \item{order.variable}{Order of coefficients in the plot. \code{"original"} (default) preserves the original order of the variable. \code{"coeforder"} plots by the discending order of the coefficient size. \code{"asis"} use the default \code{ggplot} setting.}
 
@@ -27,6 +28,8 @@ plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
 \item{show.confint}{Show confidence interval (boulean). The default is \code{TRUE}.}
 
 \item{percent.confint}{The percentage used for confidence interval (numeric: 0-100). The default is \code{95}.}
+
+\item{vcov.confint}{The alternative variance-covariance matrix to be used for the model object \code{x}. Ignored if \code{NULL} (default) or \code{direct = TRUE}.}
 
 \item{drop.intercept}{Drop the intercept from the plot (boulean). If \code{FALSE} (default), intercept included in the plot.}
 
@@ -45,6 +48,8 @@ plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
 \item{confint.height}{The height of the vertical line added to the edge of confidence interval outputs. The default is \code{0.2}.}
 
 \item{overlap.x.list}{The list of additional estimated model result to be overlapped with the first result (list). Each element of the list must have the same set of variables and same class as the \code{x}. The default is \code{NULL}.}
+
+\item{overlap.vcov.confint.list}{The list of alternative variance-covariance matrix to be used for the corresponding model object in \code{overlap.x.list}. Ignored if \code{NULL} (default) or \code{direct = TRUE}.}
 
 \item{overlap.class.names}{The set of names that identifies overlapping \code{x}s (character vector). Needed if \code{overlap.x.list} is not \code{NULL}. The length of the vector must correspond with the length of \code{overlap.x.list} + 1. The first element of the vector is the name for \code{x}, then from the second element, the name order must correspond with the order in \code{overlap.x.list}.}
 
