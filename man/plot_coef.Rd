@@ -72,7 +72,7 @@ plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
 \code{ggplot} object (axis and theme settings can be added later).
 }
 \description{
-Drawing the coefficient plots from either model result or coefficient table. Borrowed the idea of odds ratio plotting from the code in \url{http://www.surefoss.org/dataanalysis/plotting-odds-ratios-aka-a-forrestplot-with-ggplot2/}.
+Drawing the coefficient plots from either model result or coefficient table.
 }
 \examples{
 ## Load Data
@@ -136,4 +136,7 @@ plot_coef(m_male,
           title = "Vote for Bush (1992)",
           custom.variable.names = vn)
 
+}
+\references{
+\url{http://www.surefoss.org/dataanalysis/plotting-odds-ratios-aka-a-forrestplot-with-ggplot2/}
 }

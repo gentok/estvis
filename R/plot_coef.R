@@ -3,7 +3,7 @@ globalVariables(c("CF", "lower", "overlap", "upper", "vars"))
 
 #' Plotting Coefficients
 #'
-#' @description Drawing the coefficient plots from either model result or coefficient table. Borrowed the idea of odds ratio plotting from the code in \url{http://www.surefoss.org/dataanalysis/plotting-odds-ratios-aka-a-forrestplot-with-ggplot2/}.
+#' @description Drawing the coefficient plots from either model result or coefficient table.
 #'
 #' @param x The estimated model result object.
 #' @param direct Import the result directly from the table (boulean). If \code{FALSE} (default), coefficients imported from estimated model object (\code{\link[stats]{coef}} and \code{\link[stats]{confint}} must be applicable). If \code{TRUE}, coefficients imported directly from coefficients table (rows=variables, columns=(coefficient, lower CI, upper CI), row names = variable names).
@@ -95,6 +95,8 @@ globalVariables(c("CF", "lower", "overlap", "upper", "vars"))
 #'           facet.category.names = fn,
 #'           title = "Vote for Bush (1992)",
 #'           custom.variable.names = vn)
+#'
+#' @references \url{http://www.surefoss.org/dataanalysis/plotting-odds-ratios-aka-a-forrestplot-with-ggplot2/}
 #'
 #' @importFrom stats coef
 #' @importFrom stats confint
