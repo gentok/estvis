@@ -5,15 +5,15 @@
 \title{Plotting Coefficients}
 \usage{
 plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
-  drop.intercept = FALSE, drop.intercept.names = "(Intercept)",
-  drop.variable.names = NULL, point.shape = 16, point.size = 1.5,
-  confint.linetype = 1, confint.linewidth = 0.5, confint.height = 0.2,
-  overlap.x.list = NULL, overlap.class.names = NULL,
-  overlap.gapwidth = 0.5, overlap.shape.index = NULL,
-  overlap.linetype.index = NULL, overlap.legend.position = "top",
-  facet.category.names = NULL, facet.names.location = "left",
-  facet.names.angle = 0, title = NULL, custom.variable.names = NULL,
-  custom.themes = NULL)
+  show.confint = TRUE, percent.confint = 95, drop.intercept = FALSE,
+  drop.intercept.names = "(Intercept)", drop.variable.names = NULL,
+  point.shape = 16, point.size = 1.5, confint.linetype = 1,
+  confint.linewidth = 0.5, confint.height = 0.2, overlap.x.list = NULL,
+  overlap.class.names = NULL, overlap.gapwidth = 0.5,
+  overlap.shape.index = NULL, overlap.linetype.index = NULL,
+  overlap.legend.position = "bottom", facet.category.names = NULL,
+  facet.names.location = "left", facet.names.angle = 0, title = NULL,
+  custom.variable.names = NULL, custom.themes = NULL)
 }
 \arguments{
 \item{x}{The estimated model result object.}
@@ -23,6 +23,10 @@ plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
 \item{order.variable}{Order of coefficients in the plot. \code{"original"} (default) preserves the original order of the variable. \code{"coeforder"} plots by the discending order of the coefficient size. \code{"asis"} use the default \code{ggplot} setting.}
 
 \item{odds}{Use odds ratio instead of coefficient in the output (boulean). The default is \code{FALSE}. If \code{TRUE}, the exponent of the coefficients will be plotted.}
+
+\item{show.confint}{Show confidence interval (boulean). The default is \code{TRUE}.}
+
+\item{percent.confint}{The percentage used for confidence interval (numeric: 0-100). The default is \code{95}.}
 
 \item{drop.intercept}{Drop the intercept from the plot (boulean). If \code{FALSE} (default), intercept included in the plot.}
 
@@ -50,7 +54,7 @@ plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
 
 \item{overlap.linetype.index}{The index of line types for overlapped confidence interval ouputs. Must be in the same length as \code{overlap.x.list} + 1. The first element of the vector is the shape for \code{x}, then from the second element, the order must correspond with the order in \code{overlap.x.list}. If \code{NULL}, the number corresponding with the order is assigned to each class.}
 
-\item{overlap.legend.position}{The position of the legend for overlapping classess. See \code{legend.position} in ggplot theme for possible values. The default is \code{"top"}.}
+\item{overlap.legend.position}{The position of the legend for overlapping classess. See \code{legend.position} in ggplot theme for possible values. The default is \code{"bottom"}.}
 
 \item{facet.category.names}{The categories of variables (factor). If not \code{NULL}, the output provides the separate panels for variables in each category. The length of the vector must much with the number of variables in \code{x} (This is considered BEFORE the application of \code{drop.intercept} and \code{drop.variable.names}. Just insert \code{NA} for those variables to be dropped.).}
 
@@ -69,4 +73,67 @@ plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
 }
 \description{
 Drawing the coefficient plots from either model result or coefficient table. Borrowed the idea of odds ratio plotting from the code in \url{http://www.surefoss.org/dataanalysis/plotting-odds-ratios-aka-a-forrestplot-with-ggplot2/}.
+}
+\examples{
+## Load Data
+library(pscl)
+data(vote92)
+
+## Recode Variables
+vote92$voteBush <- as.numeric(
+  factor(vote92$vote,levels=c("Clinton","Bush")))*1 - 1
+vote92$bushdis <- sqrt(vote92$bushdis)
+vote92$clintondis <- sqrt(vote92$clintondis)
+
+## Estimate Logistic Regression
+fm <- formula(voteBush ~ dem + rep +
+                clintondis + bushdis +
+                persfinance + natlecon)
+m <- glm(fm, data = vote92,
+         family = binomial("logit"))
+
+## Basic Graph
+plot_coef(m)
+
+## Change X-axis to Odds Ratio
+plot_coef(m, odds = TRUE)
+
+## Export the Coefficients Table First, and import directly
+cfci <- data.frame(cbind(coef(m), confint(m, level = 0.95)))
+plot_coef(cfci, direct = TRUE)
+
+## Estimate Model by Male and Female Subset
+m_male <- glm(fm, data = vote92[vote92$female==0,],
+         family = binomial("logit"))
+m_female <- glm(fm, data = vote92[vote92$female==1,],
+              family = binomial("logit"))
+
+## Overlap Subsetted Results
+plot_coef(m_male,
+          overlap.x.list = list(m_female),
+          overlap.class.names = c("Male", "Female"))
+
+## Add Title and Custom Variable Names
+vn <- c("(Intercept)",
+        "Democrat","Republican",
+        "Ideological Distance from Clinton",
+        "Ideological Distance from Bush",
+        "Retrospective Personal Finance",
+        "Retrospective National Economy")
+plot_coef(m_male,
+          overlap.x.list = list(m_female),
+          overlap.class.names = c("Male", "Female"),
+          title = "Vote for Bush (1992)",
+          custom.variable.names = vn)
+
+## Overlap the Third Model & Facet Variables by Category
+fn <- c("Constant",rep("Preference",4),rep("Evaluation",2))
+fn <- factor(fn,levels=unique(fn))
+plot_coef(m_male,
+          overlap.x.list = list(m_female, m),
+          overlap.class.names = c("Male", "Female", "All"),
+          facet.category.names = fn,
+          title = "Vote for Bush (1992)",
+          custom.variable.names = vn)
+
 }

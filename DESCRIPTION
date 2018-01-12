@@ -1,12 +1,14 @@
 Package: viseffect
-Title: What the Package Does (one line, title case)
+Title: Visualization Support of Estimated Results
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person("Gento", "Kato", email = "gento.badger@gmail.com", role = "cre")
+Description: Researchers frequently visualizes the estimation results of models. This package helps to simplify the visualization procedure by providing canned (but also highly customizable) functions to extract estimated results and plot.
 Depends: R (>= 3.4.3)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
 Imports: ggplot2 (>= 2.2.1),
-    stats (>= 3.4.3)
+    stats (>= 3.4.3),
+    MASS (>= 7.3-47),
+    pscl
