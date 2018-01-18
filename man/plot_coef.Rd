@@ -4,22 +4,33 @@
 \alias{plot_coef}
 \title{Plotting Coefficients}
 \usage{
-plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
+plot_coef(m, m.names = NULL, order.variable = "original", odds = FALSE,
   show.confint = TRUE, percent.confint = 95, vcov.confint = NULL,
   drop.intercept = FALSE, drop.intercept.names = "(Intercept)",
   drop.variable.names = NULL, point.shape = 16, point.size = 1.5,
   confint.linetype = 1, confint.linewidth = 0.5, confint.height = 0.2,
-  overlap.x.list = NULL, overlap.vcov.confint.list = NULL,
-  overlap.class.names = NULL, overlap.gapwidth = 0.5,
-  overlap.shape.index = NULL, overlap.linetype.index = NULL,
-  overlap.legend.position = "bottom", facet.category.names = NULL,
-  facet.names.location = "left", facet.names.angle = 0, title = NULL,
-  custom.variable.names = NULL, custom.themes = NULL)
+  overlap.gapwidth = 0.5, overlap.shape.index = NULL,
+  overlap.linetype.index = NULL, overlap.legend.position = "bottom",
+  facet.category.names = NULL, facet.names.location = "left",
+  facet.names.angle = 0, title = NULL, ytitle = NULL,
+  custom.variable.names = NULL, custom.x.title = NULL,
+  custom.x.lim = NULL, custom.x.breaks = NULL, custom.themes = NULL,
+  footnote.gof = FALSE, footnote.gof.extracts = c("AIC", "Adj. R$^2$",
+  "Log Likelihood"), custom.footnote = NULL, footnote.fontsize = NULL,
+  footnote.fontcol = "black", footnote.align = "right",
+  footnote.distance.from.side = 0.05, footnote.distance.from.bottom = 0.75,
+  footnote.bottom.expand.rate = NULL, show.plot = TRUE)
 }
 \arguments{
-\item{x}{The estimated model result object.}
+\item{m}{Single or the list of model object or the \code{matrix} or \code{data.frame} object. If it's a list all elements of the list should be the same class. If model object, \code{\link[stats]{coef}} and \code{\link[lmtest]{coefci}} must be applicable to the object. If  \code{matrix} or \code{data.frame}, then it should include following three columns and row names. Each row should correspond to each variable.
+\itemize{
+ \item{Row Names: }{Name of Variables}
+ \item{First Column: }{Coefficient}
+ \item{Second Column: }{Lower limit of confidence interval}
+ \item{Third Column: }{Upper limit of confidence interval}
+}}
 
-\item{direct}{Import the result directly from the table (boulean). If \code{FALSE} (default), coefficients imported from estimated model object (\code{\link[stats]{coef}} and \code{\link[lmtest]{coefci}} must be applicable). If \code{TRUE}, coefficients imported directly from coefficients table (rows=variables, columns=(coefficient, lower CI, upper CI), row names = variable names).}
+\item{m.names}{The set of names that identifies each element in \code{m}. Considered if \code{m} is a list of models. The length of the vector must correspond with the length of \code{m}. If \code{NULL} (default), each element \code{i} is temporarily named as \code{Model i}.}
 
 \item{order.variable}{Order of coefficients in the plot. \code{"original"} (default) preserves the original order of the variable. \code{"coeforder"} plots by the discending order of the coefficient size. \code{"asis"} use the default \code{ggplot} setting.}
 
@@ -29,7 +40,7 @@ plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
 
 \item{percent.confint}{The percentage used for confidence interval (numeric: 0-100). The default is \code{95}.}
 
-\item{vcov.confint}{The alternative variance-covariance matrix to be used for the model object \code{x}. Ignored if \code{NULL} (default) or \code{direct = TRUE}.}
+\item{vcov.confint}{Single or the list of the alternative variance-covariance matrix to be used for the model object \code{m}. Ignored if \code{NULL} (default) or the \code{m} is not model object.}
 
 \item{drop.intercept}{Drop the intercept from the plot (boulean). If \code{FALSE} (default), intercept included in the plot.}
 
@@ -47,21 +58,15 @@ plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
 
 \item{confint.height}{The height of the vertical line added to the edge of confidence interval outputs. The default is \code{0.2}.}
 
-\item{overlap.x.list}{The list of additional estimated model result to be overlapped with the first result (list). Each element of the list must have the same set of variables and same class as the \code{x}. The default is \code{NULL}.}
-
-\item{overlap.vcov.confint.list}{The list of alternative variance-covariance matrix to be used for the corresponding model object in \code{overlap.x.list}. Ignored if \code{NULL} (default) or \code{direct = TRUE}.}
-
-\item{overlap.class.names}{The set of names that identifies overlapping \code{x}s (character vector). Needed if \code{overlap.x.list} is not \code{NULL}. The length of the vector must correspond with the length of \code{overlap.x.list} + 1. The first element of the vector is the name for \code{x}, then from the second element, the name order must correspond with the order in \code{overlap.x.list}.}
-
 \item{overlap.gapwidth}{The gap between overlapped ouputs (number). The default value is \code{0.5}.}
 
-\item{overlap.shape.index}{The index of shapes for overlapped point ouputs. Must be in the same length as \code{overlap.x.list} + 1. The first element of the vector is the shape for \code{x}, then from the second element, the order must correspond with the order in \code{overlap.x.list}. If \code{NULL}, \code{point.shape} is applied to all classes.}
+\item{overlap.shape.index}{The index of shapes for overlapped point ouputs. Must be in the same length as \code{overlap.m.list} + 1. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in \code{overlap.m.list}. If \code{NULL}, \code{point.shape} is applied to all classes.}
 
-\item{overlap.linetype.index}{The index of line types for overlapped confidence interval ouputs. Must be in the same length as \code{overlap.x.list} + 1. The first element of the vector is the shape for \code{x}, then from the second element, the order must correspond with the order in \code{overlap.x.list}. If \code{NULL}, the number corresponding with the order is assigned to each class.}
+\item{overlap.linetype.index}{The index of line types for overlapped confidence interval ouputs. Must be in the same length as \code{overlap.m.list} + 1. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in \code{overlap.m.list}. If \code{NULL}, the number corresponding with the order is assigned to each class.}
 
 \item{overlap.legend.position}{The position of the legend for overlapping classess. See \code{legend.position} in ggplot theme for possible values. The default is \code{"bottom"}.}
 
-\item{facet.category.names}{The categories of variables (factor). If not \code{NULL}, the output provides the separate panels for variables in each category. The length of the vector must much with the number of variables in \code{x} (This is considered BEFORE the application of \code{drop.intercept} and \code{drop.variable.names}. Just insert \code{NA} for those variables to be dropped.).}
+\item{facet.category.names}{The categories of variables (factor). If not \code{NULL}, the output provides the separate panels for variables in each category. The length of the vector must much with the number of variables in \code{m} (This is considered BEFORE the application of \code{drop.intercept} and \code{drop.variable.names}. Just insert \code{NA} for those variables to be dropped.).}
 
 \item{facet.names.location}{The location of facetted category names. Either \code{"left"} or \code{"right"}. The default is \code{"left"}.}
 
@@ -69,12 +74,40 @@ plot_coef(x, direct = FALSE, order.variable = "original", odds = FALSE,
 
 \item{title}{Plot title (character). The default is to include no title.}
 
+\item{ytitle}{Y axis title (character). The default is to include no axis title.}
+
 \item{custom.variable.names}{List of alternative variable names in the output (character vector). The default is \code{NULL}. This is applied AFTER \code{drop.intercept} and \code{drop.variable.names} are applied, thus you don't need the names for dropped variables.}
 
+\item{custom.x.title}{Custom name for the X axis title (character). The default is \code{NULL}.}
+
+\item{custom.x.lim}{Custom limit for the X axis. The default is \code{NULL}.}
+
+\item{custom.x.breaks}{Custom breaks for the X axis. The default is \code{NULL}.}
+
 \item{custom.themes}{ggplot themes that overrides the default theme. The default is \code{NULL}.}
+
+\item{footnote.gof}{Include GOF measures in the footnote (boulean). The default is \code{FALSE}. If \code{TRUE}, footnote with GOF measures are added to the plot by \code{\link{extract_gofchr}} and \code{\link{plot_footnote}} function, and the function exports \code{gtable} object. Note that \code{gtable} object is less customizable than \code{ggplot} object.}
+
+\item{footnote.gof.extracts}{GOF measures to be inluded if \code{footnote.gof == TRUE}. See \code{\link{extract_gofchr}} documentation for more details.}
+
+\item{custom.footnote}{Custom footnote (character). The default is \code{NULL}. If assigned, footnote are added to the plot by \code{\link{plot_footnote}} function, and the function exports \code{gtable} object. Note that \code{gtable} object is less customizable than \code{ggplot} object. If it is also the case that \code{footnote.gof == TRUE}, custom footnote will be added as the new line after the GOF footnote.}
+
+\item{footnote.fontsize}{The size of font. If \code{NULL} (default), the size is set to the the font size in \code{text} setting of ggplot theme - 1.}
+
+\item{footnote.fontcol}{The color of the font. The default is \code{"black"}.}
+
+\item{footnote.align}{The alignment of the footnote text. Either \code{"right"} or \code{"left"}.}
+
+\item{footnote.distance.from.side}{The horizontal distance of notes from the edge of graph space by the proportion of graph width (numeric: 0-1). The default is \code{0.05}. The distance is measured from the side specified in \code{align}.}
+
+\item{footnote.distance.from.bottom}{The vertical distance of notes from the bottom of graph bottom by the proportion of bottom graph margin height (numeric: 0-1). The default is \code{0.75}.}
+
+\item{footnote.bottom.expand.rate}{The expansion rate of the bottom margin of the graph to incorporate footnote (numeric). The value of \code{1} indicates no expansion. If \code{NULL} (default), it is set to the number of lines in the footnote + 1.}
+
+\item{show.plot}{Print the plot at the end of function (boulean). The default is \code{TRUE}.}
 }
 \value{
-\code{ggplot} object (axis and theme settings can be added later).
+\code{ggplot} object without footnote (axis and theme settings can be added later). If footnote is added, then \code{gtable} object is the output. It is impossible to add \code{ggplot} elements to the \code{gtable} object. \code{gtable} plot can be viewed by using either \code{\link[grid]{grid.draw}()} or \code{\link[graphics]{plot}()} function.
 }
 \description{
 Drawing the coefficient plots from either model result or coefficient table.
@@ -105,7 +138,7 @@ plot_coef(m, odds = TRUE)
 
 ## Export the Coefficients Table First, and import directly
 cfci <- data.frame(cbind(coef(m), confint(m, level = 0.95)))
-plot_coef(cfci, direct = TRUE)
+plot_coef(cfci)
 
 ## Estimate Model by Male and Female Subset
 m_male <- glm(fm, data = vote92[vote92$female==0,],
@@ -114,9 +147,8 @@ m_female <- glm(fm, data = vote92[vote92$female==1,],
               family = binomial("logit"))
 
 ## Overlap Subsetted Results
-plot_coef(m_male,
-          overlap.x.list = list(m_female),
-          overlap.class.names = c("Male", "Female"))
+plot_coef(list(m_male, m_female),
+          m.names = c("Male", "Female"))
 
 ## Add Title and Custom Variable Names
 vn <- c("(Intercept)",
@@ -125,23 +157,22 @@ vn <- c("(Intercept)",
         "Ideological Distance from Bush",
         "Retrospective Personal Finance",
         "Retrospective National Economy")
-plot_coef(m_male,
-          overlap.x.list = list(m_female),
-          overlap.class.names = c("Male", "Female"),
+plot_coef(list(m_male, m_female),
+          m.names = c("Male", "Female"),
           title = "Vote for Bush (1992)",
           custom.variable.names = vn)
 
-## Overlap the Third Model & Facet Variables by Category
+## Overlap the Third Model & Facet Variables by Category & Add GOF Footnote
 fn <- c("Constant",rep("Preference",4),rep("Evaluation",2))
 fn <- factor(fn,levels=unique(fn))
-plot_coef(m_male,
-          overlap.x.list = list(m_female, m),
-          overlap.class.names = c("Male", "Female", "All"),
+plot_coef(list(m_male, m_female, m),
+          m.names = c("Male", "Female", "All"),
           facet.category.names = fn,
           title = "Vote for Bush (1992)",
-          custom.variable.names = vn)
+          custom.variable.names = vn,
+          footnote.gof = TRUE)
 
 }
 \references{
-\url{http://www.surefoss.org/dataanalysis/plotting-odds-ratios-aka-a-forrestplot-with-ggplot2/}
+\url{http://www.surefoss.org/dataanalysis/plotting-odds-ratios-aka-a-forrestplot-with-ggplot2/} is where my initial idea come from.
 }
