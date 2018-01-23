@@ -1,3 +1,6 @@
+sim <- function(object, n.sims=100, vcov. = NULL) 0
+setGeneric("sim")
+
 setMethod("sim", signature(object = "lm"),
     function(object, n.sims=100, vcov. = NULL)
     {
