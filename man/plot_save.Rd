@@ -25,7 +25,7 @@ tiff_save(p, w = 800, h = 600, res = 120, file = NULL, dir = NULL,
   ...)
 }
 \arguments{
-\item{p}{The \code{ggplot} object.}
+\item{p}{The \code{ggplot} object or \code{gtable} object.}
 
 \item{w}{The width of the plot ouput. If \code{NULL} (default), \code{8} for \code{format = "pdf"}, \code{800} for \code{format \%in\% c("bmp", "png", "jpeg", "tiff")}.}
 

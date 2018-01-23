@@ -4,20 +4,27 @@
 \alias{extract_gofchr}
 \title{Extracting GOFs from Models for Footnote using \code{\link[texreg]{extract}()} function}
 \usage{
-extract_gofchr(m, m.names = NULL, gof.extracts = c("AIC", "Adj. R$^2$",
-  "Log Likelihood"), ...)
+extract_gofchr(m, m.names = NULL, nobs = "right", gof.extracts = c("AIC",
+  "Adj. R$^2$", "Log Likelihood"), gof.reorder = NULL, linebreak = TRUE,
+  ...)
 }
 \arguments{
 \item{m}{Single model object or the list of model objects.}
 
 \item{m.names}{The names for models (character vector). The default is \code{NULL}, but required when there are multiple models in the input.}
 
-\item{gof.extracts}{The GOF measures to be included in the output (character/character vector). The default is \code{c("AIC", "Adj. R$^2$", "Log Likelihood")}. If set \code{"all"}, then all GOFs extracted by \code{\link[texreg]{extract}()} function are included in texts.}
+\item{nobs}{The position of "number of observation (N)" to be printed. The default is \code{"right"} (the end of the sentence). \code{"left"} (the start of the sentence) and \code{"none"} (do not print number of observation) are also available.}
+
+\item{gof.extracts}{The GOF measures to be included in the output (character/character vector). The default is \code{c("AIC", "Adj. R$^2$", "Log Likelihood")}. If \code{"all"}, then all GOFs extracted by \code{\link[texreg]{extract}()} function are included in texts. If \code{"none"} and \code{nobs} is not \code{"none"}, then only number of observation will be printed.}
+
+\item{gof.reorder}{The numeric vector specifying the alternative order of GOF  (e.g., if there are three GOFs, and you want to flip the order of first and second GOF, then input <code>c(2,1,3)</code>). The length of the vector must correspond with the number of <i>exported</i> GOFs (it may not be the same as the length of <code>gof.extracts</code>). If <code>NULL</code> (default), the original order is used. The order does not include the number of observation (if exported).}
+
+\item{linebreak}{Include linebreak between model (boulean). If \code{TRUE} (default), linebreak will be included between models. If \code{FALSE}, the ouput will be single line. Only applicable when there are more than one model.}
 
 \item{...}{Additional arguments passed to \code{\link[texreg]{extract}()} function.}
 }
 \value{
-A \code{character} vector, including GOFs and number of observations of results.
+A \code{character} vector, including GOFs and number of observations of results. Subsequently used within \code{\link{plot_coef}} function.
 }
 \description{
 Extracting GOFs from Models for footnote using \code{\link[texreg]{extract}()} function from \code{texreg} package.

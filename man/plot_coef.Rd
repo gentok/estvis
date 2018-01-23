@@ -5,21 +5,23 @@
 \title{Plotting Coefficients}
 \usage{
 plot_coef(m, m.names = NULL, order.variable = "original", odds = FALSE,
-  show.confint = TRUE, percent.confint = 95, vcov.confint = NULL,
+  vcov.est = NULL, sims.est = NULL, show.ci = TRUE, level.ci = 0.95,
   drop.intercept = FALSE, drop.intercept.names = "(Intercept)",
   drop.variable.names = NULL, point.shape = 16, point.size = 1.5,
-  confint.linetype = 1, confint.linewidth = 0.5, confint.height = 0.2,
+  ci.linetype = 1, ci.size = 0.5, ci.height = 0.2,
   overlap.gapwidth = 0.5, overlap.shape.index = NULL,
   overlap.linetype.index = NULL, overlap.legend.position = "bottom",
   facet.category.names = NULL, facet.names.location = "left",
   facet.names.angle = 0, title = NULL, ytitle = NULL,
   custom.variable.names = NULL, custom.x.title = NULL,
   custom.x.lim = NULL, custom.x.breaks = NULL, custom.themes = NULL,
-  footnote.gof = FALSE, footnote.gof.extracts = c("AIC", "Adj. R$^2$",
-  "Log Likelihood"), custom.footnote = NULL, footnote.fontsize = NULL,
+  footnote.gof = FALSE, footnote.gof.nobs = "right",
+  footnote.gof.extracts = c("AIC", "Adj. R$^2$", "Log Likelihood"),
+  footnote.gof.reorder = NULL, footnote.gof.linebreak = TRUE,
+  custom.footnote = NULL, footnote.fontsize = NULL,
   footnote.fontcol = "black", footnote.align = "right",
   footnote.distance.from.side = 0.05, footnote.distance.from.bottom = 0.75,
-  footnote.bottom.expand.rate = NULL, show.plot = TRUE)
+  footnote.bottom.expand.rate = NULL, show.plot = TRUE, flip.plot = FALSE)
 }
 \arguments{
 \item{m}{Single or the list of model object or the \code{matrix} or \code{data.frame} object. If it's a list all elements of the list should be the same class. If model object, \code{\link[stats]{coef}} and \code{\link[lmtest]{coefci}} must be applicable to the object. If  \code{matrix} or \code{data.frame}, then it should include following three columns and row names. Each row should correspond to each variable.
@@ -32,15 +34,17 @@ plot_coef(m, m.names = NULL, order.variable = "original", odds = FALSE,
 
 \item{m.names}{The set of names that identifies each element in \code{m}. Considered if \code{m} is a list of models. The length of the vector must correspond with the length of \code{m}. If \code{NULL} (default), each element \code{i} is temporarily named as \code{Model i}.}
 
-\item{order.variable}{Order of coefficients in the plot. \code{"original"} (default) preserves the original order of the variable. \code{"coeforder"} plots by the discending order of the coefficient size. \code{"asis"} use the default \code{ggplot} setting.}
+\item{order.variable}{Order of coefficients in the plot(character/numeric vector). \code{"original"} (default) preserves the original order of the variable. \code{"cfdescend"} plots by the descending order of coefficient values. \code{"cfascend"} plots by the ascending order of coefficient values. \code{"asis"} use the default \code{ggplot} setting.}
 
 \item{odds}{Use odds ratio instead of coefficient in the output (boulean). The default is \code{FALSE}. If \code{TRUE}, the exponent of the coefficients will be plotted.}
 
-\item{show.confint}{Show confidence interval (boulean). The default is \code{TRUE}.}
+\item{vcov.est}{Single or the list of the alternative variance-covariance matrix to be used for the model object \code{m}. Ignored if \code{NULL} (default) or the \code{m} is not model object. Must have the same length as \code{m} if it is a list.}
 
-\item{percent.confint}{The percentage used for confidence interval (numeric: 0-100). The default is \code{95}.}
+\item{sims.est}{Number of iterations if simulation method is used to calculate mean coefficient value and confidence interval. If \code{NULL} (default), the analytical method is used to calculate confidence intervals.}
 
-\item{vcov.confint}{Single or the list of the alternative variance-covariance matrix to be used for the model object \code{m}. Ignored if \code{NULL} (default) or the \code{m} is not model object.}
+\item{show.ci}{Show confidence interval (boulean). The default is \code{TRUE}.}
+
+\item{level.ci}{The level used for confidence interval (numeric: 0-1). The default is \code{0.95}.}
 
 \item{drop.intercept}{Drop the intercept from the plot (boulean). If \code{FALSE} (default), intercept included in the plot.}
 
@@ -52,11 +56,11 @@ plot_coef(m, m.names = NULL, order.variable = "original", odds = FALSE,
 
 \item{point.size}{Size of point outputs (numeric). The default is \code{1.5}.}
 
-\item{confint.linetype}{The line type of confidence interval outputs (numeric). The default is \code{1}.}
+\item{ci.linetype}{The line type of confidence interval outputs (numeric). The default is \code{1}.}
 
-\item{confint.linewidth}{The line width of confidence interval outputs (numeric). The default is \code{0.5}.}
+\item{ci.size}{The line width of confidence interval outputs (numeric). The default is \code{0.5}.}
 
-\item{confint.height}{The height of the vertical line added to the edge of confidence interval outputs. The default is \code{0.2}.}
+\item{ci.height}{The height of the vertical line added to the edge of confidence interval outputs. The default is \code{0.2}.}
 
 \item{overlap.gapwidth}{The gap between overlapped ouputs (number). The default value is \code{0.5}.}
 
@@ -88,7 +92,11 @@ plot_coef(m, m.names = NULL, order.variable = "original", odds = FALSE,
 
 \item{footnote.gof}{Include GOF measures in the footnote (boulean). The default is \code{FALSE}. If \code{TRUE}, footnote with GOF measures are added to the plot by \code{\link{extract_gofchr}} and \code{\link{plot_footnote}} function, and the function exports \code{gtable} object. Note that \code{gtable} object is less customizable than \code{ggplot} object.}
 
-\item{footnote.gof.extracts}{GOF measures to be inluded if \code{footnote.gof == TRUE}. See \code{\link{extract_gofchr}} documentation for more details.}
+\item{footnote.gof.nobs}{The position of "number of observation (N)" to be printed. The default is \code{"right"} (the end of the sentence). \code{"left"} (the start of the sentence) and \code{"none"} (do not print number of observation) are also available.}
+
+\item{footnote.gof.extracts}{GOF measures to be inluded if \code{footnote.gof == TRUE}. See \code{\link{extract_gofchr}} documentation for more details.#' #' @param gof.reorder The numeric vector specifying the alternative order of GOF  (e.g., if there are three GOFs, and you want to flip the order of first and second GOF, then input <code>c(2,1,3)</code>). The length of the vector must correspond with the number of <i>exported</i> GOFs (it may not be the same as the length of <code>footnote.gof.extracts</code>). If <code>NULL</code> (default), the original order is used. The order does not include the number of observation (if exported).}
+
+\item{footnote.gof.linebreak}{Include linebreak between models (boulean). If \code{TRUE} (default), linebreak will be included between models. If \code{FALSE}, the ouput will be single line. Only applicable when there are more than one model.}
 
 \item{custom.footnote}{Custom footnote (character). The default is \code{NULL}. If assigned, footnote are added to the plot by \code{\link{plot_footnote}} function, and the function exports \code{gtable} object. Note that \code{gtable} object is less customizable than \code{ggplot} object. If it is also the case that \code{footnote.gof == TRUE}, custom footnote will be added as the new line after the GOF footnote.}
 
@@ -105,6 +113,8 @@ plot_coef(m, m.names = NULL, order.variable = "original", odds = FALSE,
 \item{footnote.bottom.expand.rate}{The expansion rate of the bottom margin of the graph to incorporate footnote (numeric). The value of \code{1} indicates no expansion. If \code{NULL} (default), it is set to the number of lines in the footnote + 1.}
 
 \item{show.plot}{Print the plot at the end of function (boulean). The default is \code{TRUE}.}
+
+\item{flip.plot}{Flip the x and y axis of the plot. The default is \code{FALSE}. If \code{TRUE}, the variable names will be printed as columns and coefficients will be printed as rows. The original design does not intended for flipping the axis, thus flipping it may cause problems in the layout.}
 }
 \value{
 \code{ggplot} object without footnote (axis and theme settings can be added later). If footnote is added, then \code{gtable} object is the output. It is impossible to add \code{ggplot} elements to the \code{gtable} object. \code{gtable} plot can be viewed by using either \code{\link[grid]{grid.draw}()} or \code{\link[graphics]{plot}()} function.

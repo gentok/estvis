@@ -1,4 +1,4 @@
-#' Default \code{ggplot} theme for \code{viseffect} package.
+#' Default \code{ggplot} theme for \code{estvis} package.
 #'
 #' @importFrom ggplot2 theme
 #' @importFrom ggplot2 element_text
@@ -7,7 +7,7 @@
 #' @importFrom ggplot2 element_rect
 #'
 #' @export
-viseffect.theme <- function(){
+estvis.theme <- function(){
   gt <- theme(text = element_text(size=10, colour="black"), # General Text Setting
         axis.text.x=element_text(colour="black"), # x axis labels text
         axis.text.y=element_text(colour="black"), # y axis labels text
