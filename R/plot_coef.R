@@ -131,6 +131,9 @@ extract_gofchr <- function(m,
     gofchr <- gsub('\n', ' ', gofchr)
   }
 
+  # Replace Some Latex Expressions
+  gofchr <- gsub("$^2$", ' sq.', gofchr, fixed=TRUE)
+
   ## Return The Character Vector
   return(gofchr)
 
@@ -178,7 +181,8 @@ extract_gofchr <- function(m,
 #' @param custom.themes ggplot themes that overrides the default theme. The default is \code{NULL}.
 #' @param footnote.gof Include GOF measures in the footnote (boulean). The default is \code{FALSE}. If \code{TRUE}, footnote with GOF measures are added to the plot by \code{\link{extract_gofchr}} and \code{\link{plot_footnote}} function, and the function exports \code{gtable} object. Note that \code{gtable} object is less customizable than \code{ggplot} object.
 #' @param footnote.gof.nobs The position of "number of observation (N)" to be printed. The default is \code{"right"} (the end of the sentence). \code{"left"} (the start of the sentence) and \code{"none"} (do not print number of observation) are also available.
-#' @param footnote.gof.extracts GOF measures to be inluded if \code{footnote.gof == TRUE}. See \code{\link{extract_gofchr}} documentation for more details.#' #' @param gof.reorder The numeric vector specifying the alternative order of GOF  (e.g., if there are three GOFs, and you want to flip the order of first and second GOF, then input <code>c(2,1,3)</code>). The length of the vector must correspond with the number of <i>exported</i> GOFs (it may not be the same as the length of <code>footnote.gof.extracts</code>). If <code>NULL</code> (default), the original order is used. The order does not include the number of observation (if exported).
+#' @param footnote.gof.extracts GOF measures to be inluded if \code{footnote.gof == TRUE}. See \code{\link{extract_gofchr}} documentation for more details.
+#' @param footnote.gof.reorder The numeric vector specifying the alternative order of GOF  (e.g., if there are three GOFs, and you want to flip the order of first and second GOF, then input \code{c(2,1,3)}). The length of the vector must correspond with the number of exported GOFs (it may not be the same as the length of \code{footnote.gof.extracts}). If \code{NULL} (default), the original order is used. The order does not include the number of observation (if exported).
 #' @param footnote.gof.linebreak Include linebreak between models (boulean). If \code{TRUE} (default), linebreak will be included between models. If \code{FALSE}, the ouput will be single line. Only applicable when there are more than one model.
 #' @param custom.footnote Custom footnote (character). The default is \code{NULL}. If assigned, footnote are added to the plot by \code{\link{plot_footnote}} function, and the function exports \code{gtable} object. Note that \code{gtable} object is less customizable than \code{ggplot} object. If it is also the case that \code{footnote.gof == TRUE}, custom footnote will be added as the new line after the GOF footnote.
 #' @param footnote.fontsize The size of font. If \code{NULL} (default), the size is set to the the font size in \code{text} setting of ggplot theme - 1.

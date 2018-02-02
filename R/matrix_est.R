@@ -7,6 +7,7 @@
 #'
 #' @importFrom lmtest coeftest
 #' @importFrom lmtest coefci
+#' @importFrom stats quantile
 #'
 #' @export
 matrix_coefci <- function(m,

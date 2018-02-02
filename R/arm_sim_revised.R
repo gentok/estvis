@@ -1,3 +1,11 @@
+#'
+#' @importFrom stats coefficients
+#' @importFrom methods new
+#' @importFrom stats rchisq
+#' @importFrom stats model.matrix
+#' @importFrom stats coef
+#' @importFrom stats vcov
+
 sim <- function(object, n.sims=100, vcov. = NULL) 0
 setGeneric("sim")
 

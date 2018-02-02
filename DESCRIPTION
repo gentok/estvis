@@ -14,4 +14,5 @@ Imports: ggplot2 (>= 2.2.1),
     pscl (>= 1.5.2),
     lmtest (>= 0.9-35),
     interplot (>= 0.1.5),
-    texreg (>= 1.36.18)
+    texreg (>= 1.36.18),
+    methods

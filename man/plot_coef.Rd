@@ -94,7 +94,9 @@ plot_coef(m, m.names = NULL, order.variable = "original", odds = FALSE,
 
 \item{footnote.gof.nobs}{The position of "number of observation (N)" to be printed. The default is \code{"right"} (the end of the sentence). \code{"left"} (the start of the sentence) and \code{"none"} (do not print number of observation) are also available.}
 
-\item{footnote.gof.extracts}{GOF measures to be inluded if \code{footnote.gof == TRUE}. See \code{\link{extract_gofchr}} documentation for more details.#' #' @param gof.reorder The numeric vector specifying the alternative order of GOF  (e.g., if there are three GOFs, and you want to flip the order of first and second GOF, then input <code>c(2,1,3)</code>). The length of the vector must correspond with the number of <i>exported</i> GOFs (it may not be the same as the length of <code>footnote.gof.extracts</code>). If <code>NULL</code> (default), the original order is used. The order does not include the number of observation (if exported).}
+\item{footnote.gof.extracts}{GOF measures to be inluded if \code{footnote.gof == TRUE}. See \code{\link{extract_gofchr}} documentation for more details.}
+
+\item{footnote.gof.reorder}{The numeric vector specifying the alternative order of GOF  (e.g., if there are three GOFs, and you want to flip the order of first and second GOF, then input \code{c(2,1,3)}). The length of the vector must correspond with the number of exported GOFs (it may not be the same as the length of \code{footnote.gof.extracts}). If \code{NULL} (default), the original order is used. The order does not include the number of observation (if exported).}
 
 \item{footnote.gof.linebreak}{Include linebreak between models (boulean). If \code{TRUE} (default), linebreak will be included between models. If \code{FALSE}, the ouput will be single line. Only applicable when there are more than one model.}
 
