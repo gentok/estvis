@@ -68,14 +68,16 @@ plot_save <- function(p,
                             h = 6
                           }
                           if (is.null(file) == TRUE) {
-                            pdf(paste(substitute(p),"pdf",sep="."),width=w,height=h, ...)
                             if (is.null(dir) == FALSE) {
                               pdf(paste(dir,"/",substitute(p),".pdf",sep=""),width=w,height=h, ...)
+                            } else {
+                              pdf(paste(substitute(p),"pdf",sep="."),width=w,height=h, ...)
                             }
                           }  else {
-                            pdf(file,width=w,height=h, ...)
                             if (is.null(dir) == FALSE) {
                               pdf(paste(dir, file, sep="/"),width=w,height=h, ...)
+                            } else {
+                              pdf(file,width=w,height=h, ...)
                             }
                           }
                         } else {
@@ -87,14 +89,16 @@ plot_save <- function(p,
                           }
                           fn <- get(format)
                           if (is.null(file)==TRUE){
-                            fn(paste(substitute(p),substitute(format),sep="."), width = w, height = h, res = res, ...)
                             if (is.null(dir) == FALSE) {
                               fn(paste(dir, "/", substitute(p), ".", substitute(format), sep=""), width = w, height = h, res = res, ...)
+                            } else {
+                              fn(paste(substitute(p),substitute(format),sep="."), width = w, height = h, res = res, ...)
                             }
                           } else {
-                            fn(file, width = w, height = h, res = res, ...)
                             if (is.null(dir) == FALSE) {
                               fn(paste(dir, file, sep="/"), width = w, height = h, res = res, ...)
+                            } else {
+                              fn(file, width = w, height = h, res = res, ...)
                             }
                           }
                         }

@@ -64,9 +64,9 @@ plot_coef(m, m.names = NULL, order.variable = "original", odds = FALSE,
 
 \item{overlap.gapwidth}{The gap between overlapped ouputs (number). The default value is \code{0.5}.}
 
-\item{overlap.shape.index}{The index of shapes for overlapped point ouputs. Must be in the same length as \code{overlap.m.list} + 1. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in \code{overlap.m.list}. If \code{NULL}, \code{point.shape} is applied to all classes.}
+\item{overlap.shape.index}{The index of shapes for overlapped point ouputs. Must be in the same length as the list \code{m}. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in the list \code{m}. If \code{NULL}, \code{point.shape} is applied to all classes.}
 
-\item{overlap.linetype.index}{The index of line types for overlapped confidence interval ouputs. Must be in the same length as \code{overlap.m.list} + 1. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in \code{overlap.m.list}. If \code{NULL}, the number corresponding with the order is assigned to each class.}
+\item{overlap.linetype.index}{The index of line types for overlapped confidence interval ouputs. Must be in the same length as the list \code{m}. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in the list \code{m}. If \code{NULL}, the number corresponding with the order is assigned to each class.}
 
 \item{overlap.legend.position}{The position of the legend for overlapping classess. See \code{legend.position} in ggplot theme for possible values. The default is \code{"bottom"}.}
 
