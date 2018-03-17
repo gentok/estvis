@@ -1,3 +1,6 @@
+#' Simulation Function
+#'
+#' @description Revised \code{sim} function in \code{arm} package.
 #'
 #' @importFrom stats coefficients
 #' @importFrom methods new
@@ -5,7 +8,8 @@
 #' @importFrom stats model.matrix
 #' @importFrom stats coef
 #' @importFrom stats vcov
-
+#'
+#' @export
 sim <- function(object, n.sims=100, vcov. = NULL) 0
 setGeneric("sim")
 

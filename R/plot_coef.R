@@ -169,11 +169,11 @@ extract_gofchr <- function(m,
 #' @param overlap.shape.index The index of shapes for overlapped point ouputs. Must be in the same length as the list \code{m}. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in the list \code{m}. If \code{NULL}, \code{point.shape} is applied to all classes.
 #' @param overlap.linetype.index The index of line types for overlapped confidence interval ouputs. Must be in the same length as the list \code{m}. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in the list \code{m}. If \code{NULL}, the number corresponding with the order is assigned to each class.
 #' @param overlap.legend.position The position of the legend for overlapping classess. See \code{legend.position} in ggplot theme for possible values. The default is \code{"bottom"}.
-#' @param facet.category.names The categories of variables (factor). If not \code{NULL}, the output provides the separate panels for variables in each category. The length of the vector must much with the number of variables in \code{m} (This is considered BEFORE the application of \code{drop.intercept} and \code{drop.variable.names}. Just insert \code{NA} for those variables to be dropped.).
-#' @param facet.names.location The location of facetted category names. Either \code{"left"} or \code{"right"}. The default is \code{"left"}.
-#' @param facet.names.angle The angle of facetted category names (numeric). The default is \code{0} (horizontal).
+#' @param category.names The categories of variables (factor). If not \code{NULL}, the output provides the separate panels for variables in each category. The length of the vector must much with the number of variables in \code{m} (This is considered BEFORE the application of \code{drop.intercept} and \code{drop.variable.names}. Just insert \code{NA} for those variables to be dropped.).
+#' @param category.names.location The location of facetted category names. Either \code{"left"} or \code{"right"}. The default is \code{"left"}.
+#' @param category.names.angle The angle of facetted category names (numeric). The default is \code{0} (horizontal).
 #' @param title Plot title (character). The default is to include no title.
-#' @param ytitle Y axis title (character). The default is to include no axis title.
+#' @param y.title Y axis title (character). The default is to include no axis title.
 #' @param custom.variable.names List of alternative variable names in the output (character vector). The default is \code{NULL}. This is applied AFTER \code{drop.intercept} and \code{drop.variable.names} are applied, thus you don't need the names for dropped variables.
 #' @param custom.x.title Custom name for the X axis title (character). The default is \code{NULL}.
 #' @param custom.x.lim Custom limit for the X axis. The default is \code{NULL}.
@@ -251,7 +251,7 @@ extract_gofchr <- function(m,
 #' fn <- factor(fn,levels=unique(fn))
 #' plot_coef(list(m_male, m_female, m),
 #'           m.names = c("Male", "Female", "All"),
-#'           facet.category.names = fn,
+#'           category.names = fn,
 #'           title = "Vote for Bush (1992)",
 #'           custom.variable.names = vn,
 #'           footnote.gof = TRUE)
@@ -304,11 +304,11 @@ plot_coef<-function(m,
                     overlap.shape.index = NULL,
                     overlap.linetype.index = NULL,
                     overlap.legend.position = "bottom",
-                    facet.category.names = NULL,
-                    facet.names.location = "left",
-                    facet.names.angle = 0,
+                    category.names = NULL,
+                    category.names.location = "left",
+                    category.names.angle = 0,
                     title = NULL,
-                    ytitle = NULL,
+                    y.title = NULL,
                     custom.variable.names = NULL,
                     custom.x.title = NULL,
                     custom.x.lim = NULL,
@@ -380,21 +380,21 @@ if (direct==TRUE){
   tmp <- m
   originalm <- m
   varnames <- row.names(originalm)
-  facetnames <- facet.category.names
+  facetnames <- category.names
   if (is.null(overlap.m.list)==FALSE) {
     for(i in 1:length(overlap.m.list)){
       m <- rbind(m,overlap.m.list[[i]])
     }
     tmp <- m
     varnames <- rep(row.names(originalm),length(overlap.m.list)+1)
-    facetnames <- rep(facet.category.names,length(overlap.m.list)+1)
+    facetnames <- rep(category.names,length(overlap.m.list)+1)
   }
 } else if (direct==FALSE) {
   pci <- level.ci
   tmp <- matrix_coefci (m, level=pci, vcov. = vcov.est, sims = sims.est)
   originalm <- tmp
   varnames <- row.names(originalm)
-  facetnames <- facet.category.names
+  facetnames <- category.names
   if (is.null(overlap.m.list)==FALSE) {
     if(is.null(overlap.vcov.est.list)==TRUE){
       overlap.vcov.est.list <- vector("list", length(overlap.m.list))
@@ -403,7 +403,7 @@ if (direct==TRUE){
       tmp <- rbind(tmp,matrix_coefci (overlap.m.list[[i]], level=pci, vcov. = overlap.vcov.est.list[[i]], sims = sims.est))
     }
     varnames <- rep(row.names(originalm),length(overlap.m.list)+1)
-    facetnames <- rep(facet.category.names,length(overlap.m.list)+1)
+    facetnames <- rep(category.names,length(overlap.m.list)+1)
   }
 }
 if (odds){
@@ -418,8 +418,8 @@ if (is.null(overlap.m.list)==FALSE) {
   coefs$overlap <- rep(overlap.class.names, each=nrow(originalm))
   coefs$overlap <- factor(coefs$overlap,levels=overlap.class.names)
 }
-if (is.null(facet.category.names)==FALSE) {
-  coefs$facet <- factor(facetnames,levels=levels(facet.category.names))
+if (is.null(category.names)==FALSE) {
+  coefs$facet <- factor(facetnames,levels=levels(category.names))
 }
 
 ## Drop intercept
@@ -508,19 +508,19 @@ if (is.null(overlap.m.list)==TRUE) {
 }
 
 ## Intermediate Plot 2 (If Facetted)
-if (is.null(facet.category.names)==FALSE) {
-  if (facet.names.location=="left"){
+if (is.null(category.names)==FALSE) {
+  if (category.names.location=="left"){
     plotmid <- plotmid +
     facet_grid(facet~.,margins=F,scales="free_y",space="free_y",switch="y") +
     theme(strip.placement = "outside",
-          strip.text.y = element_text(size=11, angle=facet.names.angle+180, face="bold"))
-  } else if (facet.names.location=="right"){
-    if(facet.names.angle>0){
-      facet.names.angle <- 360-facet.names.angle
+          strip.text.y = element_text(size=11, angle=category.names.angle+180, face="bold"))
+  } else if (category.names.location=="right"){
+    if(category.names.angle>0){
+      category.names.angle <- 360-category.names.angle
     }
     plotmid <- plotmid +
     facet_grid(facet~.,margins=F,scales="free_y",space="free_y") +
-    theme(strip.text.y = element_text(size=11, angle=facet.names.angle, face="bold"))
+    theme(strip.text.y = element_text(size=11, angle=category.names.angle, face="bold"))
   }
 }
 
@@ -537,7 +537,7 @@ if (odds){
   plotfin <- plotmid + scale_y_log10(breaks=ticks, labels = ticks) +
   scale_x_discrete() +
   geom_hline(yintercept = 1, linetype=2) +
-  labs(title = title, x = ytitle, y = ylabtxt)
+  labs(title = title, x = y.title, y = ylabtxt)
 } else {
   if (show.ci==TRUE) {
     ylabtxt <- paste('Coefficient with ', level.ci*100, '% Confidence Interval', sep="")
@@ -550,7 +550,7 @@ if (odds){
   plotfin <- plotmid + scale_y_continuous(breaks=ticks, labels = ticks) +
   scale_x_discrete() +
   geom_hline(yintercept = 0, linetype=2) +
-  labs(title = title, x = ytitle, y = ylabtxt)
+  labs(title = title, x = y.title, y = ylabtxt)
 }
 
 ## Adding Footnote

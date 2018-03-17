@@ -11,8 +11,8 @@ plot_coef(m, m.names = NULL, order.variable = "original", odds = FALSE,
   ci.linetype = 1, ci.size = 0.5, ci.height = 0.2,
   overlap.gapwidth = 0.5, overlap.shape.index = NULL,
   overlap.linetype.index = NULL, overlap.legend.position = "bottom",
-  facet.category.names = NULL, facet.names.location = "left",
-  facet.names.angle = 0, title = NULL, ytitle = NULL,
+  category.names = NULL, category.names.location = "left",
+  category.names.angle = 0, title = NULL, y.title = NULL,
   custom.variable.names = NULL, custom.x.title = NULL,
   custom.x.lim = NULL, custom.x.breaks = NULL, custom.themes = NULL,
   footnote.gof = FALSE, footnote.gof.nobs = "right",
@@ -70,15 +70,15 @@ plot_coef(m, m.names = NULL, order.variable = "original", odds = FALSE,
 
 \item{overlap.legend.position}{The position of the legend for overlapping classess. See \code{legend.position} in ggplot theme for possible values. The default is \code{"bottom"}.}
 
-\item{facet.category.names}{The categories of variables (factor). If not \code{NULL}, the output provides the separate panels for variables in each category. The length of the vector must much with the number of variables in \code{m} (This is considered BEFORE the application of \code{drop.intercept} and \code{drop.variable.names}. Just insert \code{NA} for those variables to be dropped.).}
+\item{category.names}{The categories of variables (factor). If not \code{NULL}, the output provides the separate panels for variables in each category. The length of the vector must much with the number of variables in \code{m} (This is considered BEFORE the application of \code{drop.intercept} and \code{drop.variable.names}. Just insert \code{NA} for those variables to be dropped.).}
 
-\item{facet.names.location}{The location of facetted category names. Either \code{"left"} or \code{"right"}. The default is \code{"left"}.}
+\item{category.names.location}{The location of facetted category names. Either \code{"left"} or \code{"right"}. The default is \code{"left"}.}
 
-\item{facet.names.angle}{The angle of facetted category names (numeric). The default is \code{0} (horizontal).}
+\item{category.names.angle}{The angle of facetted category names (numeric). The default is \code{0} (horizontal).}
 
 \item{title}{Plot title (character). The default is to include no title.}
 
-\item{ytitle}{Y axis title (character). The default is to include no axis title.}
+\item{y.title}{Y axis title (character). The default is to include no axis title.}
 
 \item{custom.variable.names}{List of alternative variable names in the output (character vector). The default is \code{NULL}. This is applied AFTER \code{drop.intercept} and \code{drop.variable.names} are applied, thus you don't need the names for dropped variables.}
 
@@ -179,7 +179,7 @@ fn <- c("Constant",rep("Preference",4),rep("Evaluation",2))
 fn <- factor(fn,levels=unique(fn))
 plot_coef(list(m_male, m_female, m),
           m.names = c("Male", "Female", "All"),
-          facet.category.names = fn,
+          category.names = fn,
           title = "Vote for Bush (1992)",
           custom.variable.names = vn,
           footnote.gof = TRUE)
