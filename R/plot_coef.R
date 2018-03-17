@@ -469,18 +469,20 @@ if (is.null(overlap.m.list)==FALSE) {
 ## Start Plotting
 if (order.variable=="asis"){
   plotstart <- ggplot(coefs, aes(y= CF, x = vars )) +
-    gtheme + coord_cartesian(ylim=custom.x.lim)
+    gtheme
 } else if (order.variable=="cfdescend") {
   plotstart <- ggplot(coefs, aes(y= CF, x = reorder(vars, CF) )) +
-    gtheme + coord_cartesian(ylim=custom.x.lim)
+    gtheme
 } else if (order.variable=="original") {
   plotstart <- ggplot(coefs, aes(y= CF, x = reorder(vars, (length(vars)+1) - seq(1,length(vars),1)) )) +
-    gtheme + coord_cartesian(ylim=custom.x.lim)
+    gtheme 
 }
 
 ## Flip the Plot if flip.plot = FALSE
 if (flip.plot == FALSE) {
-  plotstart <- plotstart + coord_flip()
+  plotstart <- plotstart + coord_flip(ylim=custom.x.lim)
+} else {
+  plotstart <- plotstart + coord_cartesian(ylim=custom.x.lim)
 }
 
 ## Override by Custom Themes
