@@ -4,9 +4,9 @@
 \alias{extract_gofchr}
 \title{Extracting GOFs from Models for Footnote using \code{\link[texreg]{extract}()} function}
 \usage{
-extract_gofchr(m, m.names = NULL, nobs = "right", gof.extracts = c("AIC",
-  "Adj. R$^2$", "Log Likelihood"), gof.reorder = NULL, linebreak = TRUE,
-  ...)
+extract_gofchr(m, m.names = NULL, nobs = "right",
+  gof.extracts = c("AIC", "Adj. R$^2$", "Log Likelihood"),
+  gof.reorder = NULL, linebreak = TRUE, ...)
 }
 \arguments{
 \item{m}{Single model object or the list of model objects.}

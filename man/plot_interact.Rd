@@ -5,8 +5,8 @@
 \title{Plot Interaction Effects}
 \usage{
 plot_interact(m, v1, v2, plot = TRUE, steps = NULL, ci = 0.95,
-  hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000, xmin = NA,
-  xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5,
+  hist = FALSE, var2_dt = NA, point = FALSE, sims = 5000,
+  xmin = NA, xmax = NA, ercolor = NA, esize = 0.5, ralpha = 0.5,
   rfill = "grey70")
 }
 \arguments{

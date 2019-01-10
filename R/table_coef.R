@@ -61,6 +61,8 @@ table_coef<-function(m,
                       if (class(m)[1] != "list"){
                         m <- list(m)
                         alt.vcov <- list(vcov.est)
+                      } else {
+                        alt.vcov <- vcov.est
                       }
 
                       # Set alternative Standard Errors
@@ -205,6 +207,7 @@ table_coef<-function(m,
                                symbol = symbol.tex, ...)
                         tb <- tb.tex
                       } else if (format %in% c("html","doc")) {
+                        if (is.null(caption)==TRUE) caption <- "No Title"
                         tb.html <- htmlreg(m,
                                file = filepath,
                                override.se = alt.se,

@@ -4,24 +4,26 @@
 \alias{plot_coef}
 \title{Plotting Coefficients}
 \usage{
-plot_coef(m, m.names = NULL, order.variable = "original", odds = FALSE,
-  vcov.est = NULL, sims.est = NULL, show.ci = TRUE, level.ci = 0.95,
-  drop.intercept = FALSE, drop.intercept.names = "(Intercept)",
-  drop.variable.names = NULL, point.shape = 16, point.size = 1.5,
-  ci.linetype = 1, ci.size = 0.5, ci.height = 0.2,
-  overlap.gapwidth = 0.5, overlap.shape.index = NULL,
-  overlap.linetype.index = NULL, overlap.legend.position = "bottom",
-  category.names = NULL, category.names.location = "left",
-  category.names.angle = 0, title = NULL, y.title = NULL,
-  custom.variable.names = NULL, custom.x.title = NULL,
-  custom.x.lim = NULL, custom.x.breaks = NULL, custom.themes = NULL,
-  footnote.gof = FALSE, footnote.gof.nobs = "right",
-  footnote.gof.extracts = c("AIC", "Adj. R$^2$", "Log Likelihood"),
-  footnote.gof.reorder = NULL, footnote.gof.linebreak = TRUE,
-  custom.footnote = NULL, footnote.fontsize = NULL,
-  footnote.fontcol = "black", footnote.align = "right",
-  footnote.distance.from.side = 0.05, footnote.distance.from.bottom = 0.75,
-  footnote.bottom.expand.rate = NULL, show.plot = TRUE, flip.plot = FALSE)
+plot_coef(m, m.names = NULL, order.variable = "original",
+  odds = FALSE, vcov.est = NULL, sims.est = NULL, show.ci = TRUE,
+  level.ci = 0.95, drop.intercept = FALSE,
+  drop.intercept.names = "(Intercept)", drop.variable.names = NULL,
+  point.shape = 16, point.size = 1.5, ci.linetype = 1,
+  ci.size = 0.5, ci.height = 0.2, overlap.gapwidth = 0.5,
+  overlap.shape.index = NULL, overlap.linetype.index = NULL,
+  overlap.legend.position = "bottom", category.names = NULL,
+  category.names.location = "left", category.names.angle = 0,
+  title = NULL, y.title = NULL, custom.variable.names = NULL,
+  custom.x.title = NULL, custom.x.lim = NULL, custom.x.breaks = NULL,
+  custom.themes = NULL, footnote.gof = FALSE,
+  footnote.gof.nobs = "right", footnote.gof.extracts = c("AIC",
+  "Adj. R$^2$", "Log Likelihood"), footnote.gof.reorder = NULL,
+  footnote.gof.linebreak = TRUE, custom.footnote = NULL,
+  footnote.fontsize = NULL, footnote.fontcol = "black",
+  footnote.align = "right", footnote.distance.from.side = 0.05,
+  footnote.distance.from.bottom = 0.75,
+  footnote.bottom.expand.rate = NULL, show.plot = TRUE,
+  flip.plot = FALSE)
 }
 \arguments{
 \item{m}{Single or the list of model object or the \code{matrix} or \code{data.frame} object. If it's a list all elements of the list should be the same class. If model object, \code{\link[stats]{coef}} and \code{\link[lmtest]{coefci}} must be applicable to the object. If  \code{matrix} or \code{data.frame}, then it should include following three columns and row names. Each row should correspond to each variable.

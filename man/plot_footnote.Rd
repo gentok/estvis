@@ -5,8 +5,9 @@
 \title{Adding footnote to the \code{ggplot} object}
 \usage{
 plot_footnote(p, note, fontsize = NULL, fontcol = "black",
-  align = "right", distance.from.side = 0.05, distance.from.bottom = 0.75,
-  bottom.expand.rate = NULL, show.plot = TRUE)
+  align = "right", distance.from.side = 0.05,
+  distance.from.bottom = 0.75, bottom.expand.rate = NULL,
+  show.plot = TRUE)
 }
 \arguments{
 \item{p}{\code{ggplot} object.}

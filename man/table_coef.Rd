@@ -5,14 +5,15 @@
 \title{Plotting Coefficients}
 \usage{
 table_coef(m, format = "tex", file.name = NULL, dir = NULL,
-  m.names = NULL, vcov.est = NULL, digits = 3, drop.intercept = FALSE,
-  drop.intercept.names = "(Intercept)", drop.variable.names = NULL,
-  caption = NULL, custom.variable.names = NULL, footnote.psymbol = TRUE,
+  m.names = NULL, vcov.est = NULL, digits = 3,
+  drop.intercept = FALSE, drop.intercept.names = "(Intercept)",
+  drop.variable.names = NULL, caption = NULL,
+  custom.variable.names = NULL, footnote.psymbol = TRUE,
   custom.footnote = NULL, show.table = TRUE, booktabs = TRUE,
   dcolumn = FALSE, use.packages = FALSE, stars = c(0.001, 0.01, 0.05,
   0.1), symbol = "dagger", caption.above = TRUE, single.row = FALSE,
-  float.pos = "h!!", fontsize = "footnotesize", include.deviance = FALSE,
-  include.smooth = FALSE, ...)
+  float.pos = "h!!", fontsize = "footnotesize",
+  include.deviance = FALSE, include.smooth = FALSE, ...)
 }
 \arguments{
 \item{m}{Single or the list of model object.}
