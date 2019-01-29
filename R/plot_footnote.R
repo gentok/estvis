@@ -4,6 +4,7 @@
 #'
 #' @param p \code{ggplot} object.
 #' @param note The content of footnote (character). Line break is allowed by using \code{\\n}.
+#' @param caption Use caption option in ggplot2. If \code{TRUE} (default), all following options are ignored.
 #' @param fontsize The size of font. If \code{NULL} (default), the size is set to the the font size in \code{text} setting of \code{p} - 1.
 #' @param fontcol The color of the font. The default is \code{"black"}.
 #' @param align The alignment of the footnote text. Either \code{"right"} or \code{"left"}.
@@ -45,12 +46,13 @@
 #' @importFrom grid gpar
 #' @importFrom grid gTree
 #' @importFrom grid gList
+#' @importFrom grid grid.draw
 #' @importFrom gtable gtable_add_grob
-#' @importFrom graphics plot
 #'
 #' @export
 plot_footnote <- function(p,
                          note,
+                         caption = TRUE,
                          fontsize = NULL,
                          fontcol = "black",
                          align = "right",
@@ -61,43 +63,47 @@ plot_footnote <- function(p,
 
                            # Assign p to g
                            g <- p
-
-                           # Default Bottom Expand Rate
-                           if (is.null(bottom.expand.rate)==TRUE) {
-                             bottom.expand.rate <- lengths(regmatches(note, gregexpr("\n", note))) + 2
+                           
+                           if (caption==TRUE){
+                             g <- g + labs(caption=note)
+                           } else {
+                             # Default Bottom Expand Rate
+                             if (is.null(bottom.expand.rate)==TRUE) {
+                               bottom.expand.rate <- lengths(regmatches(note, gregexpr("\n", note))) + 2
+                             }
+                             
+                             # Expand Bottom Plot Margin
+                             g$theme$plot.margin[3] <- g$theme$plot.margin[3]*bottom.expand.rate
+                             
+                             # Set default font size
+                             if (is.null(fontsize)==TRUE){
+                               fontsize = g$theme$text$size - 1
+                             }
+                             
+                             # Reverse Distance from Side Measure if Alginment is Right
+                             if (align=="right") {
+                               distance.from.side <- 1 - distance.from.side
+                             }
+                             
+                             # Convert the object to gtable object
+                             g <- ggplotGrob(g)
+                             
+                             # Footnote location
+                             vloc <- g$layout[which(g$layout$name == "background"), "b"]
+                             rloc <- g$layout[which(g$layout$name == "background"), "r"]
+                             
+                             # Prepare Footnote Grob
+                             foot = textGrob(note, x = distance.from.side, y = distance.from.bottom,
+                                             just = c(align, "top"), gp = gpar(fontsize = fontsize, col =  fontcol))
+                             labs.foot = gTree("LabsFoot", children = gList(foot))
+                             
+                             # Add Footnote to the Plot
+                             g <- gtable_add_grob(g, labs.foot, t = vloc, l = 1, r = rloc)
                            }
-
-                           # Expand Bottom Plot Margin
-                           g$theme$plot.margin[3] <- g$theme$plot.margin[3]*bottom.expand.rate
-
-                           # Set default font size
-                           if (is.null(fontsize)==TRUE){
-                             fontsize = g$theme$text$size - 1
-                           }
-
-                           # Reverse Distance from Side Measure if Alginment is Right
-                           if (align=="right") {
-                             distance.from.side <- 1 - distance.from.side
-                           }
-
-                           # Convert the object to gtable object
-                           g <- ggplotGrob(g)
-
-                           # Footnote location
-                           vloc <- g$layout[which(g$layout$name == "background"), "b"]
-                           rloc <- g$layout[which(g$layout$name == "background"), "r"]
-
-                           # Prepare Footnote Grob
-                           foot = textGrob(note, x = distance.from.side, y = distance.from.bottom,
-                                           just = c(align, "top"), gp = gpar(fontsize = fontsize, col =  fontcol))
-                           labs.foot = gTree("LabsFoot", children = gList(foot))
-
-                           # Add Footnote to the Plot
-                           g <- gtable_add_grob(g, labs.foot, t = vloc, l = 1, r = rloc)
 
                            # Display New Plot
                            if(show.plot == TRUE){
-                             plot(g)
+                             grid.draw(g)
                            }
 
                            return(g)

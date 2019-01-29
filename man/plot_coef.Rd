@@ -19,8 +19,9 @@ plot_coef(m, m.names = NULL, order.variable = "original",
   footnote.gof.nobs = "right", footnote.gof.extracts = c("AIC",
   "Adj. R$^2$", "Log Likelihood"), footnote.gof.reorder = NULL,
   footnote.gof.linebreak = TRUE, custom.footnote = NULL,
-  footnote.fontsize = NULL, footnote.fontcol = "black",
-  footnote.align = "right", footnote.distance.from.side = 0.05,
+  footnote.caption = FALSE, footnote.fontsize = NULL,
+  footnote.fontcol = "black", footnote.align = "right",
+  footnote.distance.from.side = 0.05,
   footnote.distance.from.bottom = 0.75,
   footnote.bottom.expand.rate = NULL, show.plot = TRUE,
   flip.plot = FALSE)
@@ -103,6 +104,8 @@ plot_coef(m, m.names = NULL, order.variable = "original",
 \item{footnote.gof.linebreak}{Include linebreak between models (boulean). If \code{TRUE} (default), linebreak will be included between models. If \code{FALSE}, the ouput will be single line. Only applicable when there are more than one model.}
 
 \item{custom.footnote}{Custom footnote (character). The default is \code{NULL}. If assigned, footnote are added to the plot by \code{\link{plot_footnote}} function, and the function exports \code{gtable} object. Note that \code{gtable} object is less customizable than \code{ggplot} object. If it is also the case that \code{footnote.gof == TRUE}, custom footnote will be added as the new line after the GOF footnote.}
+
+\item{footnote.caption}{Use caption option in ggplot2 to add footnote. If \code{TRUE}, all footnote options below are ignored.}
 
 \item{footnote.fontsize}{The size of font. If \code{NULL} (default), the size is set to the the font size in \code{text} setting of ggplot theme - 1.}
 

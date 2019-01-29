@@ -4,8 +4,8 @@
 \alias{plot_footnote}
 \title{Adding footnote to the \code{ggplot} object}
 \usage{
-plot_footnote(p, note, fontsize = NULL, fontcol = "black",
-  align = "right", distance.from.side = 0.05,
+plot_footnote(p, note, caption = TRUE, fontsize = NULL,
+  fontcol = "black", align = "right", distance.from.side = 0.05,
   distance.from.bottom = 0.75, bottom.expand.rate = NULL,
   show.plot = TRUE)
 }
@@ -13,6 +13,8 @@ plot_footnote(p, note, fontsize = NULL, fontcol = "black",
 \item{p}{\code{ggplot} object.}
 
 \item{note}{The content of footnote (character). Line break is allowed by using \code{\\n}.}
+
+\item{caption}{Use caption option in ggplot2. If \code{TRUE} (default), all following options are ignored.}
 
 \item{fontsize}{The size of font. If \code{NULL} (default), the size is set to the the font size in \code{text} setting of \code{p} - 1.}
 

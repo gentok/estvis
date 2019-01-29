@@ -185,6 +185,7 @@ extract_gofchr <- function(m,
 #' @param footnote.gof.reorder The numeric vector specifying the alternative order of GOF  (e.g., if there are three GOFs, and you want to flip the order of first and second GOF, then input \code{c(2,1,3)}). The length of the vector must correspond with the number of exported GOFs (it may not be the same as the length of \code{footnote.gof.extracts}). If \code{NULL} (default), the original order is used. The order does not include the number of observation (if exported).
 #' @param footnote.gof.linebreak Include linebreak between models (boulean). If \code{TRUE} (default), linebreak will be included between models. If \code{FALSE}, the ouput will be single line. Only applicable when there are more than one model.
 #' @param custom.footnote Custom footnote (character). The default is \code{NULL}. If assigned, footnote are added to the plot by \code{\link{plot_footnote}} function, and the function exports \code{gtable} object. Note that \code{gtable} object is less customizable than \code{ggplot} object. If it is also the case that \code{footnote.gof == TRUE}, custom footnote will be added as the new line after the GOF footnote.
+#' @param footnote.caption Use caption option in ggplot2 to add footnote. If \code{TRUE}, all footnote options below are ignored.
 #' @param footnote.fontsize The size of font. If \code{NULL} (default), the size is set to the the font size in \code{text} setting of ggplot theme - 1.
 #' @param footnote.fontcol The color of the font. The default is \code{"black"}.
 #' @param footnote.align The alignment of the footnote text. Either \code{"right"} or \code{"left"}.
@@ -282,6 +283,7 @@ extract_gofchr <- function(m,
 #' @importFrom ggplot2 facet_grid
 #' @importFrom ggplot2 waiver
 #' @import pscl
+#' @importFrom grid grid.draw
 #'
 #' @export
 plot_coef<-function(m,
@@ -320,6 +322,7 @@ plot_coef<-function(m,
                     footnote.gof.reorder = NULL,
                     footnote.gof.linebreak = TRUE,
                     custom.footnote = NULL,
+                    footnote.caption = FALSE,
                     footnote.fontsize = NULL,
                     footnote.fontcol = "black",
                     footnote.align = "right",
@@ -581,6 +584,7 @@ if (footnote.gof == TRUE) {
       footnotechr <- paste(footnotechr, custom.footnote, sep="\n")
     }
     plotfin <- plot_footnote(plotfin, footnotechr,
+                             caption = footnote.caption,
                              fontsize = footnote.fontsize,
                              fontcol = footnote.fontcol,
                              align = footnote.align,
@@ -602,7 +606,7 @@ if (footnote.gof == TRUE) {
 
 # Display New Plot
 if(show.plot == TRUE){
-  plot(plotfin)
+  grid.draw(plotfin)
 }
 
 ## Return the Plot
