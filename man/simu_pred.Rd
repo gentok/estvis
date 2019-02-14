@@ -4,37 +4,129 @@
 \alias{simu_pred}
 \title{Exporting Simulated Predictions}
 \usage{
-simu_pred(m, profile = NULL, type = "response", at = "means",
-  show.ci = TRUE, level.ci = 0.95, est.vcov = "robust",
-  robust.type = "HC1", iterate.num = 1000, iterate.seed = 578)
+simu_pred(m, profile = NULL, y.label = "auto", at = "means",
+  type = "response", show.ci = TRUE, level.ci = 0.95,
+  vcov.est = NULL, robust.type = "HC1", cluster.var = NULL,
+  iterate.num = 1000, iterate.seed = 578, rawbeta = NULL,
+  dropbeta = NULL, ...)
 }
 \arguments{
-\item{m}{Single model object or the list of model objects.}
+\item{m}{Single model object.}
 
-\item{profile}{The case profile  (\code{matrix} or \code{data.frame}). Column names are variables in the model and prediction is made for each row. Any missing variable in the profile is substituted by the rule defined by \code{at}. The default is \code{NULL} (see \code{at}).}
+\item{profile}{The case profile  (\code{matrix} or \code{data.frame}). Column names are variables in the model and prediction is made for each row. Any missing variable in the profile is substituted by the rule defined by \code{at}. The default is \code{NULL} (all values are set using \code{at} option).}
 
-\item{type}{If \code{response} (default), the output is transformed to the response format}
+\item{y.label}{The label of the dependent variable (optional, character).}
+
+\item{at}{Values to be fixed if not specified in \code{profile}. Choose from \code{"means"} (default), \code{"medians"}, or \code{NULL} (Stop if any variable is missing in \code{profile})}
+
+\item{type}{If \code{"response"} (default), the output is transformed to the response format. If \code{"asis"}, transformation will not occur.}
 
 \item{show.ci}{Show confidence interval (boulean). The default is \code{TRUE}.}
 
 \item{level.ci}{The level used for confidence interval (numeric: 0-1). The default is \code{0.95}.}
 
-\item{est.vcov}{Variance-covariance matrix. The default is \code{"robust"} (see \code{robust.type}). If \code{NULL}, use the standard variance covariance matrix stored the model. You can also directly set the variance-covariance matrix created by \code{\link[stats]{vcov}()} or \code{\link[sandwich]{vcovHC}()}.}
+\item{vcov.est}{Variance-covariance matrix to draw coefficents. 
+If \code{"robust"}, use robust variance-covariance matrix (also see \code{robust.type}).
+If \code{"cluster"}, use cluster robust variance-covariance matrix (also see \code{cluster.var}).
+If \code{"boot"}, draw beta by non-parametric bootstrap method using \code{\link[car]{Boot}} function.
+If \code{"rawbeta"}, use pre-simulated beta given in \code{rawbeta} argument.
+If \code{NULL} (default), use the standard variance covariance matrix stored the model. You can also directly set the variance-covariance matrix created by \code{\link[stats]{vcov}()} or \code{\link[sandwich]{vcovHC}()}.}
 
-\item{robust.type}{The type of robust standard error (applied only when \code{est.vcov=="robust"}).}
+\item{robust.type}{The type of leverage adjustment passed to \code{[sandwich]{vcovHC}} (applied only when \code{vcov.est=="robust"}).}
+
+\item{cluster.var}{A \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see Details in \code{[multiwayvcov]{cluster}}. Applied only when \code{vcov.est=="cluster"}.)}
 
 \item{iterate.num}{The number of iteration in simulation.}
 
-\item{iterate.seed}{The seed value for random number generator.}
+\item{iterate.seed}{The seed value for random number generator used for the draws from multivariate normal distribution.}
+
+\item{rawbeta}{The matrix of pre-simulated beta. Columns are variables, raws are simulated cases. Used only when \code{vcov.est=="rawbeta"}.}
+
+\item{dropbeta}{If not \code{NULL}, beta of specified locations (numeric vector) are not used for prediction (rarely used).}
+
+\item{...}{Additional arguments passed to \code{[sandwich]{vcovHC}}, \code{[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}.}
 }
 \value{
 A list of: 
 \itemize{
- \item{\code{predsum}}{Summary Predictions}
+ \item{\code{predsum}}{Summary Predictions Table}
  \item{\code{profile}}{Profile Used for Predictions}
  \item{\code{predres}}{Raw Predictions}
+ \item{\code{formula}}{Estimation Formula}
+ \item{\code{y.label}}{Dependent Variable Label}
+ \item{\code{family}}{Estimation Method Family}
+ \item{\code{type}}{Output Type}
 }
 }
 \description{
-Generate prediction through Monte Carlo simulation.
+Generate prediction through Monte Carlo simulation based on  approximation.
+}
+\examples{
+
+## Load Data
+library(pscl)
+data(vote92)
+
+## Recode Variables
+vote92$voteBush <- as.numeric(
+factor(vote92$vote,levels=c("Clinton","Bush")))*1 - 1
+vote92$bushdis <- sqrt(vote92$bushdis)
+vote92$clintondis <- sqrt(vote92$clintondis)
+
+## Estimate Logistic Regression
+fm <- formula(voteBush ~ dem + rep +
+                clintondis + bushdis +
+                persfinance + natlecon)
+m <- glm(fm, data = vote92,
+         family = binomial("logit"))
+
+## Comparing Partisans
+
+# Profile
+prof1 <- data.frame(dem=c(1,0,0),rep=c(0,0,1))
+
+# Prediction (Missing Variables are Fixed at Mean/Mode)
+predprof1 <- simu_pred(m, prof1, y.label = "Bush Vote")
+summary(predprof1)
+
+# Additional Profile to Give Labels
+addprof1 <- data.frame(pid=c("Democrat","Independent","Republican"))
+addprof1$pid <- factor(addprof1$pid, levels=unique(addprof1$pid))
+
+# Plot 
+plot_simu(predprof1, name.x="pid", addprof=addprof1, label.x = "Party ID")
+# Change it to Point Graph
+plot_simu(predprof1, name.x="pid", addprof=addprof1, 
+          label.x = "Party ID", type.est = "point")
+
+## Comparing Effects of Ideological Distance by Party ID
+
+# Profile
+prof2 <- data.frame(dem=rep(rep(c(1,0,0),each=50),2),
+                    rep=rep(rep(c(0,0,1),each=50),2),
+                    bushdis=c(rep(seq(0,4,length=50),3), 
+                              rep(0.5,150)),
+                    clintondis=c(rep(0.5,150), 
+                                 rep(seq(0,4,length=50),3)))
+
+# Prediction (Missing Variables are Fixed at Mean/Mode)
+predprof2 <- simu_pred(m, prof2, y.label = "Bush Vote")
+summary(predprof2)
+
+# Additional Profile to Give Labels
+addprof2 <- data.frame(pid=rep(c("Democrat","Independent","Republican"),each=50),
+                       dis=rep(seq(0,4,length=50),6),
+                       labdis=rep(c("Ideological Distance from Bush",
+                                    "Ideological Distance from Clinton"),each=150))
+addprof2$pid <- factor(addprof2$pid, levels=rev(unique(addprof2$pid)))
+
+# Plot 
+plot_simu(predprof2, name.x="dis", addprof=addprof2,
+          name.facet.x = "labdis", name.linetype="pid",
+          label.x = NULL, label.linetype="Party ID")
+# Change Color of CIs
+plot_simu(predprof2, name.x="dis", addprof=addprof2,
+          name.facet.x = "labdis", name.linetype="pid", name.fill="pid",
+          label.x = NULL, label.linetype="Party ID")
+
 }

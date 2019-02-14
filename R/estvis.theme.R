@@ -9,8 +9,8 @@
 #' @export
 estvis.theme <- function(){
   gt <- theme(text = element_text(size=10, colour="black"), # General Text Setting
-        axis.text.x=element_text(colour="black"), # x axis labels text
-        axis.text.y=element_text(colour="black"), # y axis labels text
+        axis.text.x=element_text(size=10, colour="black"), # x axis labels text
+        axis.text.y=element_text(size=10, colour="black"), # y axis labels text
         axis.title.x=element_text(size=11,vjust=-1.5), # x axis title text
         axis.title.y=element_text(size=11,vjust=1.5), # y axis title text
         plot.title=element_text(size=11,lineheight=.8,face="bold",vjust=2,hjust=0.5), # plot title

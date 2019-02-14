@@ -1,9 +1,9 @@
 Package: estvis
 Title: Visualize estimates from various models
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: person("Gento", "Kato", email = "gento.badger@gmail.com", role = "cre")
 Description: Researchers frequently visualizes the estimates of models. This package helps to simplify the visualization procedure by providing canned (but also highly customizable) functions to extract estimates and present them in intuitive way.
-Depends: R (>= 3.4.2)
+Depends: R (>= 3.4.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -13,6 +13,12 @@ Imports: ggplot2 (>= 2.2.1),
     MASS (>= 7.3-47),
     pscl (>= 1.5.2),
     lmtest (>= 0.9-35),
-    interplot (>= 0.1.5),
     texreg (>= 1.36.18),
-    methods
+    sandwich (>= 2.4-0),
+    car (>= 3.0-0),
+    methods,
+    grid,
+    stats,
+    grDevices,
+    graphics,
+    multiwayvcov

@@ -45,6 +45,7 @@
 #' @importFrom grDevices graphics.off
 #' @importFrom grDevices dev.off
 #' @importFrom graphics plot
+#' @importFrom grid grid.draw
 #'
 #' @rdname plot_save
 #' @export
@@ -103,13 +104,13 @@ plot_save <- function(p,
                           }
                         }
 
-                        plot(p)
+                        grid.draw(p)
 
                         # Shutdown all the graphic editors
                         graphics.off()
 
                         if(show.plot == TRUE){
-                          plot(p)
+                          grid.draw(p)
                         }
                      }
 #' @rdname plot_save

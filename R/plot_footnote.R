@@ -4,7 +4,7 @@
 #'
 #' @param p \code{ggplot} object.
 #' @param note The content of footnote (character). Line break is allowed by using \code{\\n}.
-#' @param caption Use caption option in ggplot2. If \code{TRUE} (default), all following options are ignored.
+#' @param caption Use caption option in ggplot2. If \code{TRUE}, all following options are ignored.
 #' @param fontsize The size of font. If \code{NULL} (default), the size is set to the the font size in \code{text} setting of \code{p} - 1.
 #' @param fontcol The color of the font. The default is \code{"black"}.
 #' @param align The alignment of the footnote text. Either \code{"right"} or \code{"left"}.
@@ -52,7 +52,7 @@
 #' @export
 plot_footnote <- function(p,
                          note,
-                         caption = TRUE,
+                         caption = FALSE,
                          fontsize = NULL,
                          fontcol = "black",
                          align = "right",
@@ -105,6 +105,12 @@ plot_footnote <- function(p,
                            if(show.plot == TRUE){
                              grid.draw(g)
                            }
+                           
+                           # Return
+                           if (class(g)[1]=="gtable") {
+                             return(invisible(g))
+                           } else {
+                             return(g)
+                           }
 
-                           return(g)
                          }

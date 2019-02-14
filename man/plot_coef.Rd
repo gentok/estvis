@@ -5,26 +5,28 @@
 \title{Plotting Coefficients}
 \usage{
 plot_coef(m, m.names = NULL, order.variable = "original",
-  odds = FALSE, vcov.est = NULL, sims.est = NULL, show.ci = TRUE,
-  level.ci = 0.95, drop.intercept = FALSE,
-  drop.intercept.names = "(Intercept)", drop.variable.names = NULL,
-  point.shape = 16, point.size = 1.5, ci.linetype = 1,
-  ci.size = 0.5, ci.height = 0.2, overlap.gapwidth = 0.5,
+  odds = FALSE, vcov.est = NULL, robust.type = "HC1",
+  cluster.var = NULL, boot.sims = 300, boot.seed = 578,
+  boot.ncores = 1, show.ci = TRUE, level.ci = 0.95,
+  drop.intercept = FALSE, drop.intercept.names = "(Intercept)",
+  drop.variable.names = NULL, point.shape = 16, point.size = 1.5,
+  ci.linetype = 1, ci.size = 0.5, ci.height = 0.2,
+  overlap.names = "m.names", overlap.gapwidth = 0.5,
   overlap.shape.index = NULL, overlap.linetype.index = NULL,
   overlap.legend.position = "bottom", category.names = NULL,
   category.names.location = "left", category.names.angle = 0,
-  title = NULL, y.title = NULL, custom.variable.names = NULL,
-  custom.x.title = NULL, custom.x.lim = NULL, custom.x.breaks = NULL,
-  custom.themes = NULL, footnote.gof = FALSE,
-  footnote.gof.nobs = "right", footnote.gof.extracts = c("AIC",
-  "Adj. R$^2$", "Log Likelihood"), footnote.gof.reorder = NULL,
-  footnote.gof.linebreak = TRUE, custom.footnote = NULL,
-  footnote.caption = FALSE, footnote.fontsize = NULL,
-  footnote.fontcol = "black", footnote.align = "right",
-  footnote.distance.from.side = 0.05,
+  facet.names = NULL, title = NULL, y.title = NULL,
+  custom.variable.names = NULL, custom.x.title = NULL,
+  custom.x.lim = NULL, custom.x.breaks = NULL, custom.themes = NULL,
+  footnote.gof = FALSE, footnote.gof.nobs = "right",
+  footnote.gof.extracts = c("AIC", "Adj. R$^2$", "Log Likelihood"),
+  footnote.gof.reorder = NULL, footnote.gof.linebreak = TRUE,
+  custom.footnote = NULL, footnote.caption = FALSE,
+  footnote.fontsize = NULL, footnote.fontcol = "black",
+  footnote.align = "right", footnote.distance.from.side = 0.05,
   footnote.distance.from.bottom = 0.75,
   footnote.bottom.expand.rate = NULL, show.plot = TRUE,
-  flip.plot = FALSE)
+  flip.plot = FALSE, ...)
 }
 \arguments{
 \item{m}{Single or the list of model object or the \code{matrix} or \code{data.frame} object. If it's a list all elements of the list should be the same class. If model object, \code{\link[stats]{coef}} and \code{\link[lmtest]{coefci}} must be applicable to the object. If  \code{matrix} or \code{data.frame}, then it should include following three columns and row names. Each row should correspond to each variable.
@@ -35,55 +37,119 @@ plot_coef(m, m.names = NULL, order.variable = "original",
  \item{Third Column: }{Upper limit of confidence interval}
 }}
 
-\item{m.names}{The set of names that identifies each element in \code{m}. Considered if \code{m} is a list of models. The length of the vector must correspond with the length of \code{m}. If \code{NULL} (default), each element \code{i} is temporarily named as \code{Model i}.}
+\item{m.names}{The set of names that identifies each element in \code{m}. 
+Considered if \code{m} is a list of models. 
+The length of the vector must correspond with the length of \code{m}. 
+If \code{NULL} (default), each element \code{i} is temporarily named as \code{Model i}.}
 
-\item{order.variable}{Order of coefficients in the plot(character/numeric vector). \code{"original"} (default) preserves the original order of the variable. \code{"cfdescend"} plots by the descending order of coefficient values. \code{"cfascend"} plots by the ascending order of coefficient values. \code{"asis"} use the default \code{ggplot} setting.}
+\item{order.variable}{Order of coefficients in the plot(character/numeric vector). 
+\code{"original"} (default) preserves the original order of the variables. 
+\code{"cfdescend"} plots by the descending order of coefficient values. 
+\code{"cfascend"} plots by the ascending order of coefficient values.
+Alternatively, you can also specify the order of variables by numeric vector 
+(applied after \code{drop.intercept} and \code{drop.variable.names} are applied, 
+thus you don't need the names for dropped variables).}
 
-\item{odds}{Use odds ratio instead of coefficient in the output (boulean). The default is \code{FALSE}. If \code{TRUE}, the exponent of the coefficients will be plotted.}
+\item{odds}{Use odds ratio instead of coefficient in the output (boulean). 
+The default is \code{FALSE}. 
+If \code{TRUE}, the exponent of the coefficients will be plotted.}
 
-\item{vcov.est}{Single or the list of the alternative variance-covariance matrix to be used for the model object \code{m}. Ignored if \code{NULL} (default) or the \code{m} is not model object. Must have the same length as \code{m} if it is a list.}
+\item{vcov.est}{Single or a list of alternative variance-covariance matrix. 
+Each element must be one of raw variance-covariance matrix, \code{"robust"}, 
+\code{"cluster"}, \code{"boot"}, or \code{NULL} (default).
+If \code{"robust"}, robust standard error (also see \code{robust.type}).
+If \code{"cluster"}, cluster robust standard error (also see \code{cluster.var}).
+if \code{"boot"}, bootstrapped standard error calculated by \code{\link[car]{Boot}} 
+function is used.
+Ignored if \code{NULL} (default) or the \code{m} is not model object. 
+Must have the same length as \code{m} if it is a list.}
 
-\item{sims.est}{Number of iterations if simulation method is used to calculate mean coefficient value and confidence interval. If \code{NULL} (default), the analytical method is used to calculate confidence intervals.}
+\item{robust.type}{The type of leverage adjustment passed to \code{[sandwich]{vcovHC}} 
+(applied only when \code{vcov.est=="robust"}).}
+
+\item{cluster.var}{Single or a list of \code{vector}, \code{matrix}, or \code{data.frame} 
+of cluster variables, where each column is a separate variable. Alternatively, 
+a formula specifying the cluster variables to be used 
+(see details in \code{\link[multiwayvcov]{cluster.vcov}}. Applied only when \code{vcov.est=="cluster"}.)}
+
+\item{boot.sims}{Number of iterations if bootstrap is used.}
+
+\item{boot.seed}{Random number seed if bootstrap method is used.}
+
+\item{boot.ncores}{Number of cores to parallelize bootstrap. The default is \code{1}. Use \code{"auto"} to automatically detect number of cores in computer.}
 
 \item{show.ci}{Show confidence interval (boulean). The default is \code{TRUE}.}
 
-\item{level.ci}{The level used for confidence interval (numeric: 0-1). The default is \code{0.95}.}
+\item{level.ci}{The level used for confidence interval (numeric: 0-1). 
+The default is \code{0.95}.}
 
-\item{drop.intercept}{Drop the intercept from the plot (boulean). If \code{FALSE} (default), intercept included in the plot.}
+\item{drop.intercept}{Drop the intercept from the plot (boulean). 
+If \code{FALSE} (default), intercept included in the plot.}
 
-\item{drop.intercept.names}{The name(s) of intercept (character/character vector). Needed if \code{drop.intercept} is \code{TRUE}. This is used to identify and eliminate intercept variables from the output. Default value is \code{"(Intercept)"}.}
+\item{drop.intercept.names}{The name(s) of intercept (character/character vector). 
+Needed if \code{drop.intercept} is \code{TRUE}. 
+This is used to identify and eliminate intercept variables from the output. 
+Default value is \code{"(Intercept)"}.}
 
-\item{drop.variable.names}{The name(s) of additional variables to drop (character/character vector) from the ouput. The default is \code{NULL}.}
+\item{drop.variable.names}{The name(s) of additional variables to drop 
+(character/character vector) from the ouput. The default is \code{NULL}.}
 
-\item{point.shape}{Shape of the point outputs (numeric/character). The default is \code{16} (filled circle).}
+\item{point.shape}{Shape of the point outputs (numeric/character). 
+The default is \code{16} (filled circle).}
 
 \item{point.size}{Size of point outputs (numeric). The default is \code{1.5}.}
 
-\item{ci.linetype}{The line type of confidence interval outputs (numeric). The default is \code{1}.}
+\item{ci.linetype}{The line type of confidence interval outputs (numeric). 
+The default is \code{1}.}
 
-\item{ci.size}{The line width of confidence interval outputs (numeric). The default is \code{0.5}.}
+\item{ci.size}{The line width of confidence interval outputs (numeric). 
+The default is \code{0.5}.}
 
-\item{ci.height}{The height of the vertical line added to the edge of confidence interval outputs. The default is \code{0.2}.}
+\item{ci.height}{The height of the vertical line added to the edge of confidence 
+interval outputs. The default is \code{0.2}.}
 
-\item{overlap.gapwidth}{The gap between overlapped ouputs (number). The default value is \code{0.5}.}
+\item{overlap.names}{Model labels that controls overlapping 
+(applied only when there are two or more \code{m}s). 
+Default is \code{"m.names"} (use values specified in \code{m.names}). 
+You can alternatively give a character vector of the same length as \code{m}.}
 
-\item{overlap.shape.index}{The index of shapes for overlapped point ouputs. Must be in the same length as the list \code{m}. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in the list \code{m}. If \code{NULL}, \code{point.shape} is applied to all classes.}
+\item{overlap.gapwidth}{The gap between overlapped ouputs (numeric). 
+The default value is \code{0.5}.}
 
-\item{overlap.linetype.index}{The index of line types for overlapped confidence interval ouputs. Must be in the same length as the list \code{m}. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in the list \code{m}. If \code{NULL}, the number corresponding with the order is assigned to each class.}
+\item{overlap.shape.index}{The index of shapes for overlapped point ouputs. 
+Must be in the same length as the list \code{m}. 
+The first element of the vector is the shape for \code{m}, 
+then from the second element, the order must correspond with the order in the list \code{m}. 
+If \code{NULL}, \code{point.shape} is applied to all classes.}
 
-\item{overlap.legend.position}{The position of the legend for overlapping classess. See \code{legend.position} in ggplot theme for possible values. The default is \code{"bottom"}.}
+\item{overlap.linetype.index}{The index of line types for overlapped confidence interval 
+ouputs. Must be in the same length as the list \code{m}. 
+The first element of the vector is the shape for \code{m}, then from the second element, 
+the order must correspond with the order in the list \code{m}. If \code{NULL}, 
+the number corresponding with the order is assigned to each class.}
 
-\item{category.names}{The categories of variables (factor). If not \code{NULL}, the output provides the separate panels for variables in each category. The length of the vector must much with the number of variables in \code{m} (This is considered BEFORE the application of \code{drop.intercept} and \code{drop.variable.names}. Just insert \code{NA} for those variables to be dropped.).}
+\item{overlap.legend.position}{The position of the legend for overlapping classess. 
+See \code{legend.position} in ggplot theme for possible values. 
+The default is \code{"bottom"}.}
 
-\item{category.names.location}{The location of facetted category names. Either \code{"left"} or \code{"right"}. The default is \code{"left"}.}
+\item{category.names}{The categories of variables (factor). 
+If not \code{NULL}, the output provides the separate panels for variables in each category. 
+The length of the vector must much with the number of variables in \code{m} 
+(applied after \code{drop.intercept} and \code{drop.variable.names} are applied, 
+thus you don't need the names for dropped variables).}
 
-\item{category.names.angle}{The angle of facetted category names (numeric). The default is \code{0} (horizontal).}
+\item{category.names.location}{The location of category names. Either \code{"left"} or \code{"right"}. The default is \code{"left"}.}
+
+\item{category.names.angle}{The angle of category names (numeric). The default is \code{0} (horizontal).}
+
+\item{facet.names}{If not \code{NULL}, facet models by this identifier. Use \code{"m.names"} to facet each model separately (\code{overlap.names} is forced to \code{NULL}). 
+Alternatively, assign character vector of the same length as \code{m} (number of models).}
 
 \item{title}{Plot title (character). The default is to include no title.}
 
 \item{y.title}{Y axis title (character). The default is to include no axis title.}
 
-\item{custom.variable.names}{List of alternative variable names in the output (character vector). The default is \code{NULL}. This is applied AFTER \code{drop.intercept} and \code{drop.variable.names} are applied, thus you don't need the names for dropped variables.}
+\item{custom.variable.names}{Set of alternative variable names in the output (character vector). The default is \code{NULL}. This is applied AFTER \code{drop.intercept} and \code{drop.variable.names} are applied, thus you don't need the names for dropped variables.}
 
 \item{custom.x.title}{Custom name for the X axis title (character). The default is \code{NULL}.}
 
@@ -122,6 +188,8 @@ plot_coef(m, m.names = NULL, order.variable = "original",
 \item{show.plot}{Print the plot at the end of function (boulean). The default is \code{TRUE}.}
 
 \item{flip.plot}{Flip the x and y axis of the plot. The default is \code{FALSE}. If \code{TRUE}, the variable names will be printed as columns and coefficients will be printed as rows. The original design does not intended for flipping the axis, thus flipping it may cause problems in the layout.}
+
+\item{...}{Additional arguments passed to \code{[sandwich]{vcovHC}}, \code{[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}.}
 }
 \value{
 \code{ggplot} object without footnote (axis and theme settings can be added later). If footnote is added, then \code{gtable} object is the output. It is impossible to add \code{ggplot} elements to the \code{gtable} object. \code{gtable} plot can be viewed by using either \code{\link[grid]{grid.draw}()} or \code{\link[graphics]{plot}()} function.
@@ -188,6 +256,17 @@ plot_coef(list(m_male, m_female, m),
           title = "Vote for Bush (1992)",
           custom.variable.names = vn,
           footnote.gof = TRUE)
+
+## Further Adding Facets 
+plot_coef(list(m_male, m_female, m),
+          m.names = c("Male", "Female", "ALL"),
+          overlap.linetype.index = c(1,2,1),
+          category.names = fn,
+          facet.names = c("Gender Subsets","Gender Subsets","All"),
+          title = "Vote for Bush (1992)",
+          custom.variable.names = vn,
+          footnote.gof = TRUE)
+
 
 }
 \references{

@@ -1,5 +1,5 @@
 # Following variables are global
-globalVariables(c("CF", "lower", "overlap", "upper", "vars"))
+globalVariables(c("CF", "upperCI", "lowerCI","overlapnames","vars"))
 
 #' Extracting GOFs from Models for Footnote using \code{\link[texreg]{extract}()} function
 #'
@@ -150,31 +150,89 @@ extract_gofchr <- function(m,
 ##'  \item{Second Column: }{Lower limit of confidence interval}
 ##'  \item{Third Column: }{Upper limit of confidence interval}
 ##' }
-#' @param m.names The set of names that identifies each element in \code{m}. Considered if \code{m} is a list of models. The length of the vector must correspond with the length of \code{m}. If \code{NULL} (default), each element \code{i} is temporarily named as \code{Model i}.
-#' @param order.variable Order of coefficients in the plot(character/numeric vector). \code{"original"} (default) preserves the original order of the variable. \code{"cfdescend"} plots by the descending order of coefficient values. \code{"cfascend"} plots by the ascending order of coefficient values. \code{"asis"} use the default \code{ggplot} setting.
-#' @param odds Use odds ratio instead of coefficient in the output (boulean). The default is \code{FALSE}. If \code{TRUE}, the exponent of the coefficients will be plotted.
-#' @param vcov.est Single or the list of the alternative variance-covariance matrix to be used for the model object \code{m}. Ignored if \code{NULL} (default) or the \code{m} is not model object. Must have the same length as \code{m} if it is a list.
-#' @param sims.est Number of iterations if simulation method is used to calculate mean coefficient value and confidence interval. If \code{NULL} (default), the analytical method is used to calculate confidence intervals.
+#' @param m.names The set of names that identifies each element in \code{m}. 
+#' Considered if \code{m} is a list of models. 
+#' The length of the vector must correspond with the length of \code{m}. 
+#' If \code{NULL} (default), each element \code{i} is temporarily named as \code{Model i}.
+#' @param order.variable Order of coefficients in the plot(character/numeric vector). 
+#' \code{"original"} (default) preserves the original order of the variables. 
+#' \code{"cfdescend"} plots by the descending order of coefficient values. 
+#' \code{"cfascend"} plots by the ascending order of coefficient values.
+#' Alternatively, you can also specify the order of variables by numeric vector 
+#' (applied after \code{drop.intercept} and \code{drop.variable.names} are applied, 
+#' thus you don't need the names for dropped variables).
+#' @param odds Use odds ratio instead of coefficient in the output (boulean). 
+#' The default is \code{FALSE}. 
+#' If \code{TRUE}, the exponent of the coefficients will be plotted.
+#' @param vcov.est Single or a list of alternative variance-covariance matrix. 
+#' Each element must be one of raw variance-covariance matrix, \code{"robust"}, 
+#' \code{"cluster"}, \code{"boot"}, or \code{NULL} (default).
+#' If \code{"robust"}, robust standard error (also see \code{robust.type}).
+#' If \code{"cluster"}, cluster robust standard error (also see \code{cluster.var}).
+#' if \code{"boot"}, bootstrapped standard error calculated by \code{\link[car]{Boot}} 
+#' function is used.
+#' Ignored if \code{NULL} (default) or the \code{m} is not model object. 
+#' Must have the same length as \code{m} if it is a list.
+#' @param robust.type The type of leverage adjustment passed to \code{[sandwich]{vcovHC}} 
+#' (applied only when \code{vcov.est=="robust"}).
+#' @param cluster.var Single or a list of \code{vector}, \code{matrix}, or \code{data.frame} 
+#' of cluster variables, where each column is a separate variable. Alternatively, 
+#' a formula specifying the cluster variables to be used 
+#' (see details in \code{\link[multiwayvcov]{cluster.vcov}}. Applied only when \code{vcov.est=="cluster"}.)
+#' @param boot.sims Number of iterations if bootstrap is used. 
+#' @param boot.seed Random number seed if bootstrap method is used.
+#' @param boot.ncores Number of cores to parallelize bootstrap. The default is \code{1}. Use \code{"auto"} to automatically detect number of cores in computer.
 #' @param show.ci Show confidence interval (boulean). The default is \code{TRUE}.
-#' @param level.ci The level used for confidence interval (numeric: 0-1). The default is \code{0.95}.
-#' @param drop.intercept Drop the intercept from the plot (boulean). If \code{FALSE} (default), intercept included in the plot.
-#' @param drop.intercept.names The name(s) of intercept (character/character vector). Needed if \code{drop.intercept} is \code{TRUE}. This is used to identify and eliminate intercept variables from the output. Default value is \code{"(Intercept)"}.
-#' @param drop.variable.names The name(s) of additional variables to drop (character/character vector) from the ouput. The default is \code{NULL}.
-#' @param point.shape Shape of the point outputs (numeric/character). The default is \code{16} (filled circle).
+#' @param level.ci The level used for confidence interval (numeric: 0-1). 
+#' The default is \code{0.95}.
+#' @param drop.intercept Drop the intercept from the plot (boulean). 
+#' If \code{FALSE} (default), intercept included in the plot.
+#' @param drop.intercept.names The name(s) of intercept (character/character vector). 
+#' Needed if \code{drop.intercept} is \code{TRUE}. 
+#' This is used to identify and eliminate intercept variables from the output. 
+#' Default value is \code{"(Intercept)"}.
+#' @param drop.variable.names The name(s) of additional variables to drop 
+#' (character/character vector) from the ouput. The default is \code{NULL}.
+#' @param point.shape Shape of the point outputs (numeric/character). 
+#' The default is \code{16} (filled circle).
 #' @param point.size Size of point outputs (numeric). The default is \code{1.5}.
-#' @param ci.linetype The line type of confidence interval outputs (numeric). The default is \code{1}.
-#' @param ci.size The line width of confidence interval outputs (numeric). The default is \code{0.5}.
-#' @param ci.height The height of the vertical line added to the edge of confidence interval outputs. The default is \code{0.2}.
-#' @param overlap.gapwidth The gap between overlapped ouputs (number). The default value is \code{0.5}.
-#' @param overlap.shape.index The index of shapes for overlapped point ouputs. Must be in the same length as the list \code{m}. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in the list \code{m}. If \code{NULL}, \code{point.shape} is applied to all classes.
-#' @param overlap.linetype.index The index of line types for overlapped confidence interval ouputs. Must be in the same length as the list \code{m}. The first element of the vector is the shape for \code{m}, then from the second element, the order must correspond with the order in the list \code{m}. If \code{NULL}, the number corresponding with the order is assigned to each class.
-#' @param overlap.legend.position The position of the legend for overlapping classess. See \code{legend.position} in ggplot theme for possible values. The default is \code{"bottom"}.
-#' @param category.names The categories of variables (factor). If not \code{NULL}, the output provides the separate panels for variables in each category. The length of the vector must much with the number of variables in \code{m} (This is considered BEFORE the application of \code{drop.intercept} and \code{drop.variable.names}. Just insert \code{NA} for those variables to be dropped.).
-#' @param category.names.location The location of facetted category names. Either \code{"left"} or \code{"right"}. The default is \code{"left"}.
-#' @param category.names.angle The angle of facetted category names (numeric). The default is \code{0} (horizontal).
+#' @param ci.linetype The line type of confidence interval outputs (numeric). 
+#' The default is \code{1}.
+#' @param ci.size The line width of confidence interval outputs (numeric). 
+#' The default is \code{0.5}.
+#' @param ci.height The height of the vertical line added to the edge of confidence 
+#' interval outputs. The default is \code{0.2}.
+#' @param overlap.names Model labels that controls overlapping 
+#' (applied only when there are two or more \code{m}s). 
+#' Default is \code{"m.names"} (use values specified in \code{m.names}). 
+#' You can alternatively give a character vector of the same length as \code{m}.
+#' @param overlap.gapwidth The gap between overlapped ouputs (numeric). 
+#' The default value is \code{0.5}.
+#' @param overlap.shape.index The index of shapes for overlapped point ouputs. 
+#' Must be in the same length as the list \code{m}. 
+#' The first element of the vector is the shape for \code{m}, 
+#' then from the second element, the order must correspond with the order in the list \code{m}. 
+#' If \code{NULL}, \code{point.shape} is applied to all classes.
+#' @param overlap.linetype.index The index of line types for overlapped confidence interval 
+#' ouputs. Must be in the same length as the list \code{m}. 
+#' The first element of the vector is the shape for \code{m}, then from the second element, 
+#' the order must correspond with the order in the list \code{m}. If \code{NULL}, 
+#' the number corresponding with the order is assigned to each class.
+#' @param overlap.legend.position The position of the legend for overlapping classess. 
+#' See \code{legend.position} in ggplot theme for possible values. 
+#' The default is \code{"bottom"}.
+#' @param category.names The categories of variables (factor). 
+#' If not \code{NULL}, the output provides the separate panels for variables in each category. 
+#' The length of the vector must much with the number of variables in \code{m} 
+#' (applied after \code{drop.intercept} and \code{drop.variable.names} are applied, 
+#' thus you don't need the names for dropped variables).
+#' @param category.names.location The location of category names. Either \code{"left"} or \code{"right"}. The default is \code{"left"}.
+#' @param category.names.angle The angle of category names (numeric). The default is \code{0} (horizontal).
+#' @param facet.names If not \code{NULL}, facet models by this identifier. Use \code{"m.names"} to facet each model separately (\code{overlap.names} is forced to \code{NULL}). 
+#' Alternatively, assign character vector of the same length as \code{m} (number of models).  
 #' @param title Plot title (character). The default is to include no title.
 #' @param y.title Y axis title (character). The default is to include no axis title.
-#' @param custom.variable.names List of alternative variable names in the output (character vector). The default is \code{NULL}. This is applied AFTER \code{drop.intercept} and \code{drop.variable.names} are applied, thus you don't need the names for dropped variables.
+#' @param custom.variable.names Set of alternative variable names in the output (character vector). The default is \code{NULL}. This is applied AFTER \code{drop.intercept} and \code{drop.variable.names} are applied, thus you don't need the names for dropped variables.
 #' @param custom.x.title Custom name for the X axis title (character). The default is \code{NULL}.
 #' @param custom.x.lim Custom limit for the X axis. The default is \code{NULL}.
 #' @param custom.x.breaks Custom breaks for the X axis. The default is \code{NULL}.
@@ -194,6 +252,7 @@ extract_gofchr <- function(m,
 #' @param footnote.bottom.expand.rate The expansion rate of the bottom margin of the graph to incorporate footnote (numeric). The value of \code{1} indicates no expansion. If \code{NULL} (default), it is set to the number of lines in the footnote + 1.
 #' @param show.plot Print the plot at the end of function (boulean). The default is \code{TRUE}.
 #' @param flip.plot Flip the x and y axis of the plot. The default is \code{FALSE}. If \code{TRUE}, the variable names will be printed as columns and coefficients will be printed as rows. The original design does not intended for flipping the axis, thus flipping it may cause problems in the layout.
+#' @param ... Additional arguments passed to \code{[sandwich]{vcovHC}}, \code{[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}. 
 #'
 #' @return \code{ggplot} object without footnote (axis and theme settings can be added later). If footnote is added, then \code{gtable} object is the output. It is impossible to add \code{ggplot} elements to the \code{gtable} object. \code{gtable} plot can be viewed by using either \code{\link[grid]{grid.draw}()} or \code{\link[graphics]{plot}()} function.
 #'
@@ -256,6 +315,17 @@ extract_gofchr <- function(m,
 #'           title = "Vote for Bush (1992)",
 #'           custom.variable.names = vn,
 #'           footnote.gof = TRUE)
+#' 
+#' ## Further Adding Facets 
+#' plot_coef(list(m_male, m_female, m),
+#'           m.names = c("Male", "Female", "ALL"),
+#'           overlap.linetype.index = c(1,2,1),
+#'           category.names = fn,
+#'           facet.names = c("Gender Subsets","Gender Subsets","All"),
+#'           title = "Vote for Bush (1992)",
+#'           custom.variable.names = vn,
+#'           footnote.gof = TRUE)
+#' 
 #'
 #' @references \url{http://www.surefoss.org/dataanalysis/plotting-odds-ratios-aka-a-forrestplot-with-ggplot2/} is where my initial idea come from.
 #'
@@ -290,8 +360,12 @@ plot_coef<-function(m,
                     m.names = NULL,
                     order.variable="original",
                     odds=FALSE,
-                    vcov.est = NULL,
-                    sims.est = NULL,
+                    vcov.est = NULL, # or "robust" or "cluster", "boot" or raw vcov 
+                    robust.type = "HC1",
+                    cluster.var = NULL,
+                    boot.sims = 300,
+                    boot.seed = 578,
+                    boot.ncores = 1,
                     show.ci = TRUE,
                     level.ci = 0.95,
                     drop.intercept=FALSE,
@@ -302,6 +376,7 @@ plot_coef<-function(m,
                     ci.linetype = 1,
                     ci.size = 0.5,
                     ci.height = 0.2,
+                    overlap.names = "m.names",
                     overlap.gapwidth = 0.5,
                     overlap.shape.index = NULL,
                     overlap.linetype.index = NULL,
@@ -309,6 +384,7 @@ plot_coef<-function(m,
                     category.names = NULL,
                     category.names.location = "left",
                     category.names.angle = 0,
+                    facet.names = NULL,
                     title = NULL,
                     y.title = NULL,
                     custom.variable.names = NULL,
@@ -330,260 +406,451 @@ plot_coef<-function(m,
                     footnote.distance.from.bottom = 0.75,
                     footnote.bottom.expand.rate = NULL,
                     show.plot = TRUE,
-                    flip.plot = FALSE
-                    ){
-
-# Set Default Graph Theme
-gtheme <- estvis.theme() +
- theme(panel.grid.major.x = element_blank(), # x axis grid line (major)
-       panel.grid.minor.x = element_blank()) # x axis grid line (minor))
-
-# Split into the first model and the rest.
-if (class(m)[1] != "list") {
-  overlap.m.list <- NULL
-  overlap.vcov.est.list <-  NULL
-  overlap.class.names <- NULL
-} else {
-  overlap.m.list <- m[2:length(m)]
-  if (is.null(vcov.est)==FALSE){
-    overlap.vcov.est.list <- vcov.est[2:length(vcov.est)]
+                    flip.plot = FALSE,
+                    ...
+                    )
+{
+  # Set Default Graph Theme
+  gtheme <- estvis.theme() +
+    theme(panel.grid.major.x = element_blank(), # x axis grid line (major)
+          panel.grid.minor.x = element_blank()) # x axis grid line (minor))
+  
+  # Convert to a list if target is a model object
+  if (class(m)[1] != "list") m <- list(m)
+  
+  # (vcov.list) Convert to a list if target is not a list
+  if (class(vcov.est)[1]=="list") {
+    vcov.list <- vcov.est
   } else {
-    overlap.vcov.est.list <- NULL
+    vcov.list <- list(vcov.est)
   }
-  m <- m[[1]]
-  vcov.est <- vcov.est[[1]]
-  if (is.null(m.names)==TRUE) {
-    overlap.class.names <- rep(NA,length(overlap.m.list)+1)
-    for (i in 1:(length(overlap.m.list)+1)) {
-      overlap.class.names[i] <- paste("Model", i)
-    }
-  } else {
-    overlap.class.names <- m.names
-  }
-}
-
-# Identify if the input is table
-if ((class(m)[1] %in% c("matrix","data.frame"))==TRUE) {
-  direct = TRUE
-  if(ncol(m) < 3){
-    stop("Less than three columns in the matrix")
-  } else if (ncol(m) > 3) {
-    warning("More than three columns in the matrix. Only first three columns are used")
-    m <- m[,1:3]
-  }
-  if (is.null(rownames(m))==TRUE) {
-    stop("No row names for the matrix. Add them by rownames(m)")
-  }
-} else {
-  direct = FALSE
-}
-
-## Import Coefficients
-if (direct==TRUE){
-  tmp <- m
-  originalm <- m
-  varnames <- row.names(originalm)
-  facetnames <- category.names
-  if (is.null(overlap.m.list)==FALSE) {
-    for(i in 1:length(overlap.m.list)){
-      m <- rbind(m,overlap.m.list[[i]])
-    }
-    tmp <- m
-    varnames <- rep(row.names(originalm),length(overlap.m.list)+1)
-    facetnames <- rep(category.names,length(overlap.m.list)+1)
-  }
-} else if (direct==FALSE) {
-  pci <- level.ci
-  tmp <- matrix_coefci (m, level=pci, vcov. = vcov.est, sims = sims.est)
-  originalm <- tmp
-  varnames <- row.names(originalm)
-  facetnames <- category.names
-  if (is.null(overlap.m.list)==FALSE) {
-    if(is.null(overlap.vcov.est.list)==TRUE){
-      overlap.vcov.est.list <- vector("list", length(overlap.m.list))
-    }
-    for(i in 1:length(overlap.m.list)){
-      tmp <- rbind(tmp,matrix_coefci (overlap.m.list[[i]], level=pci, vcov. = overlap.vcov.est.list[[i]], sims = sims.est))
-    }
-    varnames <- rep(row.names(originalm),length(overlap.m.list)+1)
-    facetnames <- rep(category.names,length(overlap.m.list)+1)
-  }
-}
-if (odds){
-  tmp <- exp(tmp)
-}
-coefs <- tmp
-names(coefs)<-c('CF', 'lower', 'upper')
-coefs$vars <- varnames
-
-## Variables for overlaps and facettng
-if (is.null(overlap.m.list)==FALSE) {
-  coefs$overlap <- rep(overlap.class.names, each=nrow(originalm))
-  coefs$overlap <- factor(coefs$overlap,levels=overlap.class.names)
-}
-if (is.null(category.names)==FALSE) {
-  coefs$facet <- factor(facetnames,levels=levels(category.names))
-}
-
-## Drop intercept
-if (drop.intercept) {
-  coefs<-coefs[-which(coefs$vars %in% drop.intercept.names),]
-}
-
-## Drop additional variables
-if (is.null(drop.variable.names)==FALSE) {
-  coefs<-coefs[-which(coefs$vars %in% drop.variable.names),]
-}
-
-## Use Custom Variable Names or Not
-if (is.null(custom.variable.names)==FALSE) {
-  coefs$vars <- custom.variable.names
-  if (is.null(overlap.m.list)==FALSE) {
-    coefs$vars <- rep(custom.variable.names, length(overlap.m.list)+1)
-  }
-}
-
-## Change Setting for ticks if Odds Ratio
-if (odds){
-  ticks <- c(seq(.1, 1, by =.1), seq(0, 10, by =1), seq(10, 100, by =10))
-} else {
-  ticks <- waiver()
-}
-## Override ticks if custom.x.breaks is not NULL.
-if (is.null(custom.x.breaks)==FALSE){
-  ticks <- custom.x.breaks
-}
-
-## Settings for Overlapped Outputs
-if (is.null(overlap.m.list)==FALSE) {
-  classn <- length(overlap.m.list) + 1
-  if(is.null(overlap.shape.index)==FALSE){
-    overlap.shapes <- overlap.shape.index
-  } else {
-    overlap.shapes <- rep(point.shape,classn)
-  }
-  if(is.null(overlap.shape.index)==FALSE){
-    overlap.linetypes <- overlap.linetype.index
-  } else {
-    overlap.linetypes <- seq(1,classn,1)
-  }
-}
-
-## Start Plotting
-if (order.variable=="asis"){
-  plotstart <- ggplot(coefs, aes(y= CF, x = vars )) +
-    gtheme
-} else if (order.variable=="cfdescend") {
-  plotstart <- ggplot(coefs, aes(y= CF, x = reorder(vars, CF) )) +
-    gtheme
-} else if (order.variable=="original") {
-  plotstart <- ggplot(coefs, aes(y= CF, x = reorder(vars, (length(vars)+1) - seq(1,length(vars),1)) )) +
-    gtheme 
-}
-
-## Flip the Plot if flip.plot = FALSE
-if (flip.plot == FALSE) {
-  plotstart <- plotstart + coord_flip(ylim=custom.x.lim)
-} else {
-  plotstart <- plotstart + coord_cartesian(ylim=custom.x.lim)
-}
-
-## Override by Custom Themes
-if (is.null(custom.themes)==FALSE){
-  plotstart <- plotstart + custom.themes
-}
-
-## Intermediate Plot
-if (is.null(overlap.m.list)==TRUE) {
-  plotmid <- plotstart + geom_point(shape=point.shape, size=point.size)
-  if (show.ci==TRUE) {
-    plotmid <- plotmid +
-    geom_errorbar(aes(ymin=lower, ymax=upper), linetype=ci.linetype, width=ci.height, size=ci.size)
-  }
-} else {
-  plotmid <- plotstart +
-  geom_point(aes(shape=overlap), size=point.size, position=position_dodge(width = -overlap.gapwidth)) +
-  scale_shape_manual(name="Class",values=overlap.shapes)+
-  theme(legend.position=overlap.legend.position)
-  if (show.ci==TRUE) {
-    plotmid <- plotmid +
-    geom_errorbar(aes(ymin=lower, ymax=upper, linetype=overlap), width=ci.height, size=ci.size, position=position_dodge(width = -overlap.gapwidth)) +
-    scale_linetype_manual(name="Class",values=overlap.linetypes)
-  }
-}
-
-## Intermediate Plot 2 (If Facetted)
-if (is.null(category.names)==FALSE) {
-  if (category.names.location=="left"){
-    plotmid <- plotmid +
-    facet_grid(facet~.,margins=F,scales="free_y",space="free_y",switch="y") +
-    theme(strip.placement = "outside",
-          strip.text.y = element_text(size=11, angle=category.names.angle+180, face="bold"))
-  } else if (category.names.location=="right"){
-    if(category.names.angle>0){
-      category.names.angle <- 360-category.names.angle
-    }
-    plotmid <- plotmid +
-    facet_grid(facet~.,margins=F,scales="free_y",space="free_y") +
-    theme(strip.text.y = element_text(size=11, angle=category.names.angle, face="bold"))
-  }
-}
-
-## Final Plot
-if (odds){
-  if (show.ci==TRUE) {
-    ylabtxt <- paste('Odds Ratio with ', level.ci*100, '% Confidence Interval', sep="")
-  } else {
-    ylabtxt <- 'Odds Ratio'
-  }
-  if (is.null(custom.x.title)==FALSE) {
-    ylabtxt <- custom.x.title
-  }
-  plotfin <- plotmid + scale_y_log10(breaks=ticks, labels = ticks) +
-  scale_x_discrete() +
-  geom_hline(yintercept = 1, linetype=2) +
-  labs(title = title, x = y.title, y = ylabtxt)
-} else {
-  if (show.ci==TRUE) {
-    ylabtxt <- paste('Coefficient with ', level.ci*100, '% Confidence Interval', sep="")
-  } else {
-    ylabtxt <- 'Coefficient'
-  }
-  if (is.null(custom.x.title)==FALSE) {
-    ylabtxt <- custom.x.title
-  }
-  plotfin <- plotmid + scale_y_continuous(breaks=ticks, labels = ticks) +
-  scale_x_discrete() +
-  geom_hline(yintercept = 0, linetype=2) +
-  labs(title = title, x = y.title, y = ylabtxt)
-}
-
-## Adding Footnote
-if (footnote.gof == TRUE) {
-  if (direct == TRUE) {
-    stop("The model object is required to extract GOFs")
-  } else {
-    if (is.null(overlap.m.list)==FALSE) {
-      mlist <- append(list(m), overlap.m.list)
-      footnotechr <- extract_gofchr(m = mlist,
-                               m.names = overlap.class.names,
-                               nobs = footnote.gof.nobs,
-                               gof.extracts = footnote.gof.extracts,
-                               gof.reorder = footnote.gof.reorder,
-                               linebreak = footnote.gof.linebreak
-                               )
+  # (vcov.list) If length==1, replicate by the length of m
+  if (length(m)>1 & length(vcov.list)==1) {
+    tmp <- vcov.list[[1]]
+    if (is.null(tmp)) tmp <- NA
+    if (class(tmp)=="matrix") {
+      stop("m and vcov.est must have the same length.")
     } else {
-      footnotechr <- extract_gofchr(m = m,
-                                    nobs = footnote.gof.nobs,
-                                    gof.extracts = footnote.gof.extracts,
-                                    gof.reorder = footnote.gof.reorder,
-                                    linebreak = footnote.gof.linebreak
-                                    )
+      for (i in 1:length(m)) vcov.list[[i]] <- tmp
     }
-    if (is.null(custom.footnote) == FALSE) {
-      footnotechr <- paste(footnotechr, custom.footnote, sep="\n")
+  }
+  
+  # (cluster.list) Convert to a list if target is not a list
+  if (class(cluster.var)[1]=="list") {
+    cluster.list <- cluster.var
+  } else {
+    cluster.list <- list(cluster.var)
+  }
+  # (cluster.list) If length==1, replicate by the length of m
+  if (length(vcov.list)>1 & length(cluster.list)==1) {
+    tmp <- cluster.list[[1]]
+    if (is.null(tmp)) tmp <- NA
+    for (i in 1:length(m)) cluster.list[[i]] <- tmp
+  }
+  
+  # Check Length
+  if (length(m)!=length(vcov.list)) {
+    stop("m and vcov.est must have the same length.")
+  }
+  if (length(m)!=length(cluster.list)) {
+    stop("m and cluster.var must have the same length.")
+  }
+  
+  # Default Model Names
+  if (is.null(m.names)) m.names <- paste("Model", seq(1,length(m),1))
+  if (length(m)!=length(m.names)) {
+    stop("m and m.names must have the same length.")
+  }
+  if (length(m.names)!=length(unique(m.names))) {
+    stop("Each m.names must have unique values.")
+  }
+  
+  # Default Facet Names
+  add.facet <- TRUE
+  if (is.null(facet.names)) {
+    add.facet <- FALSE
+    facet.names <- rep(NA, length(m))
+  } else if (facet.names[1]=="m.names") {
+    facet.names <- m.names
+    if (overlap.names=="m.names") {
+      overlap.names <- NULL
+      warning("overlap.names set to NULL.")
     }
-    plotfin <- plot_footnote(plotfin, footnotechr,
+  }
+  if (length(m)!=length(facet.names)) {
+    stop("m and facet.names must have the same length.")
+  }
+  
+  # Default Overlap Model Names
+  add.overlap <- FALSE
+  if (!is.null(overlap.names)) {
+    if (overlap.names[1]=="m.names") overlap.names <- m.names
+  }
+  if (length(overlap.names)==0){
+    overlap.names <- rep(NA, length(m))
+  } else if (length(overlap.names)>=1) {
+    if (length(overlap.names)>1) add.overlap <- TRUE
+    if (length(m)!=length(overlap.names)) {
+      stop("m and overlap.names must have the same length.")
+    }
+  }
+  
+  # Identify if the input is table
+  direct <- list()
+  for (i in 1:length(m)) {
+    if ((class(m[[i]])[1] %in% c("matrix","data.frame"))==TRUE) {
+      direct[[i]] = TRUE
+      if(ncol(m[[i]]) < 3){
+        stop("Less than three columns in the matrix")
+      } else if (ncol(m[[i]]) > 3) {
+        warning("More than three columns in the matrix. Only first three columns are used")
+        m[[i]] <- m[[i]][,1:3]
+      }
+      if (is.null(rownames(m[[i]]))==TRUE) {
+        stop("No row names for the matrix. Add them by rownames(m)")
+      }
+    } else {
+      direct[[i]] = FALSE
+    }
+  }
+  
+  ## Import Coefficients
+  coefs <- NULL
+  for(i in 1:length(m)) {
+    if (direct[[i]]==TRUE) {
+      if(is.data.frame(m[[i]])) {
+        tmp <- m[[i]]
+      } else {
+        tmp <- as.data.frame(m[[i]][,])
+      }
+    } else if (direct[[i]]==FALSE) {
+      # Put NULL Back into vcov
+      vcov_i <- vcov.list[[i]]
+      if (!is.null(vcov_i)) {
+        if (is.na(vcov_i)) vcov_i <- NULL
+      }
+      # Put NULL Back into cluster
+      cluster_i <- cluster.list[[i]]
+      if (!is.null(cluster_i)) {
+        if (class(cluster_i)=="formula") {
+        } else if (is.na(cluster_i[1])) {
+          cluster_i <- NULL
+        }
+      }
+      tmp <- matrix_coefci(m[[i]], level=level.ci, vcov.est = vcov_i, 
+                           robust.type = robust.type, cluster.var = cluster_i,
+                           boot.sims = boot.sims, boot.seed = boot.seed, 
+                           ncores = boot.ncores, ...)
+    }
+    if (odds==TRUE) tmp <- exp(tmp)
+    colnames(tmp)[1:3] <- c("CF", "lowerCI", "upperCI")
+    tmp$vars <- rownames(tmp)
+    rownames(tmp) <- NULL
+    tmp$m.names <- m.names[i]
+    tmp$overlapnames <- overlap.names[i]
+    tmp$facetnames <- facet.names[i]
+    if (is.null(coefs)) {
+      coefs <- tmp
+    } else {
+      coefs <- rbind(coefs, tmp)
+    }
+  }
+  coefs$m.names <- factor(coefs$m.names,levels=m.names)
+  coefs$overlapnames <- factor(coefs$overlapnames,levels=unique(overlap.names))
+  coefs$facetnames <- factor(coefs$facetnames,levels=unique(facet.names))
+  
+  ## Variable Names
+  var.names <- unique(coefs$vars)
+  
+  ## Drop variables (if there is any)
+  dropvars <- character()
+  if (drop.intercept) dropvars <- c(dropvars,drop.intercept.names)
+  if (!is.null(drop.variable.names)) drop.vars <- c(dropvars, drop.variable.names)
+  if (length(dropvars) > 0) {
+    coefs <- coefs[-which(coefs$vars %in% dropvars),]
+  }
+  
+  ## Assign Variable Category
+  add.cats <- FALSE
+  if (!is.null(category.names)) {
+    add.cats <- TRUE
+    if (length(unique(coefs$vars))==length(category.names)) {
+      coefs$cats <- NA
+      if (!is.factor(category.names)) category.names <- as.factor(category.names)
+      coefs$cats <- factor(coefs$cats, levels=levels(category.names))
+      for(i in 1:length(var.names)) {
+        coefs$cats[which(coefs$vars == var.names[i])] <- category.names[i]
+      }
+    } else {
+      warning("The length of category.names does not match with the number of unique variable names.
+            category.names not assigned.")
+      coefs$cats <- NA
+      add.cats <- FALSE
+    }
+  } else {
+    coefs$cats <- NA
+  }
+  
+  ## Assign Custom Variable Names
+  if (!is.null(custom.variable.names)) {
+    var.names.2 <- unique(coefs$vars)
+    if (length(var.names.2)==length(custom.variable.names)) {
+      vartemp <- coefs$vars
+      for(i in 1:length(var.names.2)) {
+        coefs$vars[which(vartemp == var.names.2[i])] <- custom.variable.names[i]
+      }
+    } else {
+      warning("The length of custom.variable.names does not match with the number of 
+              unique variable names. Custom variable names not assigned.")
+    }
+  }
+  
+  ## Print Variable Conversion
+  catnames <- rep(NA, length(var.names))
+  if (add.cats==TRUE){
+    if (length(dropvars)==0) {
+      catnames <- category.names
+    } else {
+      catnames[-which(var.names %in% dropvars)] <- category.names
+    }
+  } 
+  convres <- data.frame(Category = catnames,
+                        Dropped = "KEPT",
+                        Original = var.names)
+  if (length(dropvars)==0) {
+    convres$Final <- unique(coefs$vars)
+  } else {
+    convres$Final <- NA
+    convres$Final[-which(var.names %in% dropvars)] <- unique(coefs$vars)
+    convres$Dropped[which(var.names %in% dropvars)] <- "DROPPED"
+  }
+  cat("Variable Manipulations: \n  ")
+  print(convres, row.names=FALSE)
+  
+  ## Change Setting for ticks if Odds Ratio
+  if (odds){
+    ticks <- c(seq(.1, 1, by =.1), seq(0, 10, by =1), seq(10, 100, by =10))
+  } else {
+    ticks <- waiver()
+  }
+  ## Override ticks if custom.x.breaks is not NULL.
+  if (is.null(custom.x.breaks)==FALSE){
+    ticks <- custom.x.breaks
+  }
+  
+  ## Settings for Overlapped Outputs
+  if (add.overlap) {
+    classn <- length(overlap.names)
+    if(is.null(overlap.shape.index)==FALSE){
+      overlap.shapes <- overlap.shape.index
+    } else {
+      overlap.shapes <- rep(point.shape,classn)
+    }
+    if(is.null(overlap.linetype.index)==FALSE){
+      overlap.linetypes <- overlap.linetype.index
+    } else {
+      overlap.linetypes <- seq(1,classn,1)
+    }
+  }
+
+  vn0 <- unique(coefs$vars)
+  addvn <- character()
+  addcn <- character()
+  addmn <- character()
+  addon <- character()
+  addfn <- character()
+  for(i in 1:length(m.names)) {
+    vn1 <- coefs$vars[coefs$m.names==m.names[i]]
+    vntmp <- vn0[-which(vn0 %in% vn1)]
+    addvn <- c(addvn, vntmp)
+    if (add.cats) {
+      cntmp <- category.names[-which(vn0 %in% vn1)]
+    } else {
+      cntmp <- rep(NA, length(vntmp))
+    }
+    addcn <- c(addcn, cntmp)
+    addmn <- c(addmn, rep(m.names[i], length(vntmp)))
+    addon <- c(addon, rep(overlap.names[i], length(vntmp)))
+    addfn <- c(addmn, rep(facet.names[i], length(vntmp)))
+  }
+  if (length(addvn)>0) {
+    addcoefs <- as.data.frame(matrix(NA, ncol=ncol(coefs), nrow=length(addvn)))
+    colnames(addcoefs) <- colnames(coefs)
+    addcoefs$vars <- addvn
+    addcoefs$cats <- addcn
+    addcoefs$m.names <- addmn
+    addcoefs$overlapnames <- addon
+    addcoefs$facetnames <- addfn
+    coefs <- rbind(coefs, addcoefs)
+  }
+  
+  # Identify Variable Names After Dropping Variables 
+  coefs$vars <- factor(coefs$vars, levels=rev(unique(coefs$vars)))
+  
+  ## Start Plotting
+  if (is.numeric(order.variable)) {
+    coefs$vars <- factor(as.character(coefs$vars), 
+                        levels=unique(as.character(coefs$vars))[order.variable])
+    p <- ggplot(coefs, aes(y= CF, x = vars)) +
+      gtheme
+  } else if (order.variable=="original"){
+    p <- ggplot(coefs, aes(y= CF, x = vars)) +
+      gtheme
+  } else if (order.variable=="cfdescend") {
+    p <- ggplot(coefs, aes(y= CF, x = reorder(vars, CF) )) +
+      gtheme
+  } else if (order.variable=="cfascend") {
+    p <- ggplot(coefs, aes(y= CF, x = reorder(vars, -CF) )) +
+      gtheme
+  } 
+  
+  ## Flip the Plot if flip.plot = FALSE
+  if (flip.plot == FALSE) {
+    p <- p + coord_flip(ylim=custom.x.lim)
+  } else {
+    p <- p + coord_cartesian(ylim=custom.x.lim)
+  }
+  
+  ## Override by Custom Themes
+  if (is.null(custom.themes)==FALSE){
+    p <- p + custom.themes
+  }
+  
+  ## Intermediate Plot
+  if (add.overlap==FALSE) {
+    p <- p + geom_point(shape=point.shape, size=point.size)
+    if (show.ci==TRUE) {
+      p <- p +
+        geom_errorbar(aes(ymin=lowerCI, ymax=upperCI), 
+                      linetype=ci.linetype, width=ci.height, size=ci.size)
+    }
+  } else {
+    p <- p +
+      geom_point(aes(shape=overlapnames), 
+                 size=point.size, 
+                 position=position_dodge(width = -overlap.gapwidth)) +
+      scale_shape_manual(name="Class",values=overlap.shapes) +
+      theme(legend.position=overlap.legend.position)
+    if (show.ci==TRUE) {
+      p <- p +
+        geom_errorbar(aes(ymin=lowerCI, ymax=upperCI, linetype=overlapnames), 
+                      width=ci.height, size=ci.size, 
+                      position=position_dodge(width = -overlap.gapwidth)) +
+        scale_linetype_manual(name="Class",values=overlap.linetypes)
+    }
+  }
+  
+  ## Intermediate Plot 2 (If Facetted)
+  if (add.cats==TRUE & add.facet==TRUE) {
+    if (category.names.location=="left"){
+      p <- p +
+        facet_grid(cats ~ facetnames, margins=F, 
+                   scales="free_y",space="free_y",switch="y") +
+        theme(strip.placement = "outside",
+              strip.text.y = element_text(size=11, angle=category.names.angle+180, face="bold", hjust=0),
+              strip.text.x = element_text(size=11, face="bold"))
+    } else if (category.names.location=="right"){
+      if(category.names.angle>0){
+        category.names.angle <- 360-category.names.angle
+      }
+      p <- p +
+        facet_grid(cats ~ facetnames,margins=F,scales="free_y",space="free_y") +
+        theme(strip.text.y = element_text(size=11, angle=category.names.angle, face="bold", hjust=1),
+              strip.text.x = element_text(size=11, face="bold"))
+    }
+  } else if (add.cats==TRUE) {
+    if (category.names.location=="left"){
+      p <- p +
+        facet_grid(cats ~ ., margins=F,scales="free_y",space="free_y",switch="y") +
+        theme(strip.placement = "outside",
+              strip.text.y = element_text(size=11, angle=category.names.angle+180, face="bold", hjust=0))
+    } else if (category.names.location=="right"){
+      if(category.names.angle>0){
+        category.names.angle <- 360-category.names.angle
+      }
+      p <- p +
+        facet_grid(cats ~ .,margins=F,scales="free_y",space="free_y") +
+        theme(strip.text.y = element_text(size=11, angle=category.names.angle, face="bold", hjust=1))
+    }
+  } else if (add.facet==TRUE) {
+    p <- p +
+      facet_grid(. ~ facetnames, margins=F) +
+      theme(strip.placement = "outside",
+            strip.text.x = element_text(size=11, face="bold"))
+  }
+
+  ## Final Plot
+  if (odds){
+    if (show.ci==TRUE) {
+      ylabtxt <- paste('Odds Ratio with ', level.ci*100, '% Confidence Interval', sep="")
+    } else {
+      ylabtxt <- 'Odds Ratio'
+    }
+    if (is.null(custom.x.title)==FALSE) {
+      ylabtxt <- custom.x.title
+    }
+    p <- p + scale_y_log10(breaks=ticks, labels = ticks) +
+      scale_x_discrete() +
+      geom_hline(yintercept = 1, linetype=2) +
+      labs(title = title, x = y.title, y = ylabtxt)
+  } else {
+    if (show.ci==TRUE) {
+      ylabtxt <- paste('Coefficient with ', level.ci*100, '% Confidence Interval', sep="")
+    } else {
+      ylabtxt <- 'Coefficient'
+    }
+    if (is.null(custom.x.title)==FALSE) {
+      ylabtxt <- custom.x.title
+    }
+    p <- p + scale_y_continuous(breaks=ticks, labels = ticks) +
+      scale_x_discrete() +
+      geom_hline(yintercept = 0, linetype=2) +
+      labs(title = title, x = y.title, y = ylabtxt)
+  }
+  
+  ## Adding Footnote
+  if (footnote.gof == TRUE) {
+    if (TRUE %in% direct){
+      stop("The model object is required to extract GOFs")
+    } else {
+      if (length(m)>1) {
+        if (add.overlap==TRUE & length(m.names)==length(overlap.names)) {
+          footnote.m.names <- overlap.names
+        } else if (add.facet==TRUE & length(m.names)==length(facet.names)) {
+          footnote.m.names <- facet.names
+        } else {
+          footnote.m.names <- m.names
+        }
+        footnotechr <- extract_gofchr(m = m,
+                                      m.names = footnote.m.names,
+                                      nobs = footnote.gof.nobs,
+                                      gof.extracts = footnote.gof.extracts,
+                                      gof.reorder = footnote.gof.reorder,
+                                      linebreak = footnote.gof.linebreak
+        )
+      } else {
+        footnotechr <- extract_gofchr(m = m[[1]],
+                                      nobs = footnote.gof.nobs,
+                                      gof.extracts = footnote.gof.extracts,
+                                      gof.reorder = footnote.gof.reorder,
+                                      linebreak = footnote.gof.linebreak
+        )
+      }
+      if (is.null(custom.footnote) == FALSE) {
+        footnotechr <- paste(footnotechr, custom.footnote, sep="\n")
+      }
+      p <- plot_footnote(p, footnotechr,
+                               caption = footnote.caption,
+                               fontsize = footnote.fontsize,
+                               fontcol = footnote.fontcol,
+                               align = footnote.align,
+                               distance.from.side = footnote.distance.from.side,
+                               distance.from.bottom = footnote.distance.from.bottom,
+                               bottom.expand.rate = footnote.bottom.expand.rate,
+                               show.plot = FALSE)
+    }
+  } else if (is.null(custom.footnote) == FALSE) {
+    p <- plot_footnote(p, custom.footnote,
                              caption = footnote.caption,
                              fontsize = footnote.fontsize,
                              fontcol = footnote.fontcol,
@@ -593,23 +860,19 @@ if (footnote.gof == TRUE) {
                              bottom.expand.rate = footnote.bottom.expand.rate,
                              show.plot = FALSE)
   }
-} else if (is.null(custom.footnote) == FALSE) {
-  plotfin <- plot_footnote(plotfin, custom.footnote,
-                           fontsize = footnote.fontsize,
-                           fontcol = footnote.fontcol,
-                           align = footnote.align,
-                           distance.from.side = footnote.distance.from.side,
-                           distance.from.bottom = footnote.distance.from.bottom,
-                           bottom.expand.rate = footnote.bottom.expand.rate,
-                           show.plot = FALSE)
+  
+  # Display New Plot
+  if(show.plot == TRUE){
+    grid.draw(p)
+  }
+  
+  ## Return the Plot
+  if (class(p)[1]=="gtable") {
+    return(invisible(p))
+  } else {
+    return(p)
+  }
+  
 }
 
-# Display New Plot
-if(show.plot == TRUE){
-  grid.draw(plotfin)
-}
 
-## Return the Plot
-return(plotfin)
-
-}

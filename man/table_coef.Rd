@@ -4,12 +4,14 @@
 \alias{table_coef}
 \title{Plotting Coefficients}
 \usage{
-table_coef(m, format = "tex", file.name = NULL, dir = NULL,
-  m.names = NULL, vcov.est = NULL, digits = 3,
+table_coef(m, format = "screen", file.name = NULL, dir = NULL,
+  m.names = NULL, order.variable = "original", vcov.est = NULL,
+  robust.type = "HC1", cluster.var = NULL, boot.sims = 300,
+  boot.seed = 578, boot.ncores = 1, digits = 3,
   drop.intercept = FALSE, drop.intercept.names = "(Intercept)",
   drop.variable.names = NULL, caption = NULL,
   custom.variable.names = NULL, footnote.psymbol = TRUE,
-  custom.footnote = NULL, show.table = TRUE, booktabs = TRUE,
+  custom.footnote = NULL, show.table = FALSE, booktabs = TRUE,
   dcolumn = FALSE, use.packages = FALSE, stars = c(0.001, 0.01, 0.05,
   0.1), symbol = "dagger", caption.above = TRUE, single.row = FALSE,
   float.pos = "h!!", fontsize = "footnotesize",
@@ -18,7 +20,7 @@ table_coef(m, format = "tex", file.name = NULL, dir = NULL,
 \arguments{
 \item{m}{Single or the list of model object.}
 
-\item{format}{The format for the table output (characater). The default is \code{"tex"} (LaTex table). Other options are \code{"html"} (HTML table), \code{"doc"} (HTML table saved as Microsof Word file), and \code{"screen"} (The R Output. Cannot be saved.)}
+\item{format}{The format for the table output (characater). The default is \code{"screen"} (The R Output. Cannot be saved.). Other options are \code{"tex"} (LaTex table), \code{"html"} (HTML table) and \code{"doc"} (HTML table saved as Microsof Word file).}
 
 \item{file.name}{The name of the file to be saved (character). The default is \code{NULL} (The output not saved to file). Extension is automatically added, so do not include it.}
 
@@ -26,7 +28,27 @@ table_coef(m, format = "tex", file.name = NULL, dir = NULL,
 
 \item{m.names}{The set of names that identifies each element in \code{m}. Considered if \code{m} is a list of models. The length of the vector must correspond with the length of \code{m}. If \code{NULL} (default), each element \code{i} is temporarily named as \code{Model i}.}
 
-\item{vcov.est}{Single or the list of the alternative variance-covariance matrix to be used for the model object \code{m}. Ignored if \code{NULL} (default) or the \code{m} is not model object. Must have the same length as \code{m} if it is a list.}
+\item{order.variable}{Order of coefficients in the plot(character/numeric vector). 
+\code{"original"} (default) preserves the original order of the variables. 
+Alternatively, you can specify the order of variables by numeric vector 
+(applied after \code{drop.intercept} and \code{drop.variable.names} are applied, 
+thus you don't need the names for dropped variables).}
+
+\item{vcov.est}{Single or a list of alternative variance-covariance matrix. Each element must be one of raw variance-covariance matrix, \code{"robust"}, \code{"boot"}, or \code{NULL} (default).
+If \code{"robust"}, robust standard error (also see \code{robust.type}).
+If \code{"cluster"}, cluster robust standard error (also see \code{cluster.var}).
+if \code{"boot"}, bootstrapped standard error calculated by \code{\link[car]{Boot}} function is used.
+Ignored if \code{NULL} (default) or the \code{m} is not model object. Must have the same length as \code{m} if it is a list.}
+
+\item{robust.type}{The type of robust standard error (applied only when \code{vcov.est=="robust"}).}
+
+\item{cluster.var}{Single or a list of \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see details in \code{\link[multiwayvcov]{cluster.vcov}}. Applied only when \code{vcov.est=="cluster"}.)}
+
+\item{boot.sims}{Number of iterations if bootstrap is used.}
+
+\item{boot.seed}{Random number seed if bootstrap is used.}
+
+\item{boot.ncores}{Number of cores to parallelize bootstrap. The default is \code{1}. Use \code{"auto"} to automatically detect number of cores in computer.}
 
 \item{digits}{Rounding decimal points for values in the table.}
 
@@ -36,13 +58,37 @@ table_coef(m, format = "tex", file.name = NULL, dir = NULL,
 
 \item{drop.variable.names}{The name(s) of additional variables to drop (character/character vector) from the ouput. The default is \code{NULL}.}
 
-\item{caption}{Table title caption (character). The default is to include no title caption.}
+\item{caption}{Table title caption (character). The default is to include no title caption. (Not applied if \code{format=="screen"})}
 
 \item{custom.variable.names}{List of alternative variable names in the output (character vector). The default is \code{NULL}. This is applied AFTER \code{drop.intercept} and \code{drop.variable.names} are applied, thus you don't need the names for dropped variables.}
 
+\item{footnote.psymbol}{Whether to add p-value symbols in the footnote.}
+
 \item{custom.footnote}{Custom footnote (character). The default is \code{NULL}. If assigned, footnote are added to the plot by \code{\link{plot_footnote}} function, and the function exports \code{gtable} object. Note that \code{gtable} object is less customizable than \code{ggplot} object. If it is also the case that \code{footnote.gof == TRUE}, custom footnote will be added as the new line after the GOF footnote.}
 
-\item{show.table}{Print the table at the end of function (boulean). The default is \code{TRUE}.}
+\item{show.table}{Print the table at the end of function (boulean). The default is \code{FALSE}.}
+
+\item{booktabs}{See \code{\link[texreg]{texreg}}.}
+
+\item{dcolumn}{See \code{\link[texreg]{texreg}}.}
+
+\item{use.packages}{See \code{\link[texreg]{texreg}}.}
+
+\item{stars}{See \code{\link[texreg]{texreg}}.}
+
+\item{symbol}{See \code{\link[texreg]{texreg}}.}
+
+\item{caption.above}{See \code{\link[texreg]{texreg}}.}
+
+\item{single.row}{See \code{\link[texreg]{texreg}}.}
+
+\item{float.pos}{See \code{\link[texreg]{texreg}}.}
+
+\item{fontsize}{See \code{\link[texreg]{texreg}}.}
+
+\item{include.deviance}{See \code{\link[texreg]{texreg}}.}
+
+\item{include.smooth}{See \code{\link[texreg]{texreg}}.}
 
 \item{...}{Other options in \code{texreg} function.}
 }
@@ -51,4 +97,92 @@ Output from \code{texreg} function.
 }
 \description{
 Drawing the coefficient table from model object(s). The wrapper function of \code{texreg}.
+}
+\examples{
+ 
+## Load Data
+library(pscl)
+data(vote92)
+
+## Recode Variables
+vote92$voteBush <- as.numeric(
+  factor(vote92$vote,levels=c("Clinton","Bush")))*1 - 1
+vote92$bushdis <- sqrt(vote92$bushdis)
+vote92$clintondis <- sqrt(vote92$clintondis)
+
+vote92$w <- abs(rnorm(nrow(vote92)))
+
+## Estimate Logistic Regression
+fm <- formula(voteBush ~ dem + rep +
+                clintondis + bushdis +
+                persfinance + natlecon)
+m <- glm(fm, data = vote92,
+         family = binomial("logit"), weights=w)
+
+## Basic Table
+table_coef(m)
+
+## Export in Tex
+table_coef(m, format = "tex")
+
+## Show in Single Row
+table_coef(m, single.row = TRUE)
+
+## Try Different Standard Errors
+table_coef(list(m,m,m,m), 
+           m.names = c("Standard","Robust(HC1)","Cluster Robust","Bootstrapped"),
+           vcov.est = list(NULL,"robust","cluster","boot"),
+           cluster.var = vote92$perotdis)
+
+## Estimate Model by Male and Female Subset
+m_male <- glm(fm, data = vote92[vote92$female==0,],
+              family = binomial("logit"))
+m_female <- glm(fm, data = vote92[vote92$female==1,],
+                family = binomial("logit"))
+
+## Table with Two Models
+table_coef(list(m_male,m_female))
+
+## Add Custom Variable Names
+vn <- c("(Intercept)",
+        "Democrat","Republican",
+        "Ideological Distance from Clinton",
+        "Ideological Distance from Bush",
+        "Retrospective Personal Finance",
+        "Retrospective National Economy")
+table_coef(list(m_male, m_female), 
+           m.names = c("Male", "Female"),
+           custom.variable.names = vn)
+
+## Add Title (Only Tex/HTML)
+table_coef(list(m_male, m_female), format="tex",
+           m.names = c("Male", "Female"),
+           caption = "Vote for Bush (1992)",
+           custom.variable.names = vn)
+
+## Omit Some Variables
+table_coef(list(m_male, m_female), 
+           m.names = c("Male", "Female"),
+           drop.variable.names = c("dem","natlecon"),
+           custom.variable.names = vn[-c(2,7)])
+
+## Reorder Variables So That Intercept Comes at the end
+table_coef(list(m_male, m_female), 
+           m.names = c("Male", "Female"),
+           drop.variable.names = c("dem","natlecon"),
+           order.variable = c(5, seq(1,4,1)),
+           custom.variable.names = vn[-c(2,7)])
+
+
+## Interaction Model
+fm2 <- formula(voteBush ~ dem + rep +
+                 clintondis + bushdis +
+                 persfinance + natlecon + 
+                 dem*clintondis)
+m2 <- glm(fm2, data = vote92,
+          family = binomial("logit"), weights=w)
+table_coef(list(m,m2), 
+           custom.variable.names = c(vn,"Democrat * Distance from Clinton"),
+           order.variable=c(1,2,4,5,6,7,8,3))
+
 }
