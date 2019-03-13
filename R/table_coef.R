@@ -326,7 +326,8 @@ table_coef<-function(m,
   
   ## Print Variable Conversion
   convres <- data.frame(Omitted = "KEPT",
-                        Original = varnames)
+                        Original = varnames,
+                        stringsAsFactors = FALSE)
   if (length(omitvarloc)==0) {
     convres$Final <- newvarnames
   } else {
