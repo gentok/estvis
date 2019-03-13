@@ -472,9 +472,11 @@ plot_coef<-function(m,
     facet.names <- rep(NA, length(m))
   } else if (facet.names[1]=="m.names") {
     facet.names <- m.names
-    if (overlap.names=="m.names") {
-      overlap.names <- NULL
-      warning("overlap.names set to NULL.")
+    if (!is.null(overlap.names)) {
+      if (overlap.names[1]=="m.names") {
+        overlap.names <- NULL
+        warning("overlap.names set to NULL.")
+      }
     }
   }
   if (length(m)!=length(facet.names)) {
@@ -521,7 +523,8 @@ plot_coef<-function(m,
       if(is.data.frame(m[[i]])) {
         tmp <- m[[i]]
       } else {
-        tmp <- as.data.frame(m[[i]][,])
+        tmp <- as.data.frame(m[[i]][,],
+                             stringAsFactors=FALSE)
       }
     } else if (direct[[i]]==FALSE) {
       # Put NULL Back into vcov
@@ -616,7 +619,8 @@ plot_coef<-function(m,
   } 
   convres <- data.frame(Category = catnames,
                         Dropped = "KEPT",
-                        Original = var.names)
+                        Original = var.names,
+                        stringsAsFactors = FALSE)
   if (length(dropvars)==0) {
     convres$Final <- unique(coefs$vars)
   } else {
@@ -652,7 +656,7 @@ plot_coef<-function(m,
       overlap.linetypes <- seq(1,classn,1)
     }
   }
-
+  
   vn0 <- unique(coefs$vars)
   addvn <- character()
   addcn <- character()
@@ -671,10 +675,12 @@ plot_coef<-function(m,
     addcn <- c(addcn, cntmp)
     addmn <- c(addmn, rep(m.names[i], length(vntmp)))
     addon <- c(addon, rep(overlap.names[i], length(vntmp)))
-    addfn <- c(addmn, rep(facet.names[i], length(vntmp)))
+    addfn <- c(addfn, rep(facet.names[i], length(vntmp)))
   }
+  
   if (length(addvn)>0) {
-    addcoefs <- as.data.frame(matrix(NA, ncol=ncol(coefs), nrow=length(addvn)))
+    addcoefs <- as.data.frame(matrix(NA, ncol=ncol(coefs), nrow=length(addvn)),
+                              stringAsFactors=FALSE)
     colnames(addcoefs) <- colnames(coefs)
     addcoefs$vars <- addvn
     addcoefs$cats <- addcn

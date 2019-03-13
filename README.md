@@ -1,6 +1,5 @@
-# <code>estvis</code> Package
-
-Developped by Gento Kato (Last Updated: 02/13/2019) 
+# <code>estvis</code> Pac
+Developped by Gento Kato (Last Updated: 03/13/2019) 
 
 ## Description
 
@@ -29,3 +28,8 @@ Helps to visualize the estimates from various models.
 * <code>ilogit</code> Calculate inverse logit.
 
 *more will be added in the future...*
+
+## Updates Log
+
+* 02/13/2019 Version 0.1.0 released
+* 03/13/2019 Version 0.1.01 (small bug fixes)
