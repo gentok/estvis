@@ -11,7 +11,7 @@ table_coef(m, format = "screen", file.name = NULL, dir = NULL,
   drop.intercept = FALSE, drop.intercept.names = "(Intercept)",
   drop.variable.names = NULL, caption = NULL,
   custom.variable.names = NULL, footnote.psymbol = TRUE,
-  custom.footnote = NULL, show.table = FALSE, booktabs = TRUE,
+  custom.footnote = NULL, show.table = TRUE, booktabs = TRUE,
   dcolumn = FALSE, use.packages = FALSE, stars = c(0.001, 0.01, 0.05,
   0.1), symbol = "dagger", caption.above = TRUE, single.row = FALSE,
   float.pos = "h!!", fontsize = "footnotesize",
@@ -66,7 +66,7 @@ Ignored if \code{NULL} (default) or the \code{m} is not model object. Must have 
 
 \item{custom.footnote}{Custom footnote (character). The default is \code{NULL}. If assigned, footnote are added to the plot by \code{\link{plot_footnote}} function, and the function exports \code{gtable} object. Note that \code{gtable} object is less customizable than \code{ggplot} object. If it is also the case that \code{footnote.gof == TRUE}, custom footnote will be added as the new line after the GOF footnote.}
 
-\item{show.table}{Print the table at the end of function (boulean). The default is \code{FALSE}.}
+\item{show.table}{Return the "screen" table at the end of function (boulean). Always returned if \code{format=="screen"}. The default is \code{TRUE}.}
 
 \item{booktabs}{See \code{\link[texreg]{texreg}}.}
 
@@ -93,7 +93,7 @@ Ignored if \code{NULL} (default) or the \code{m} is not model object. Must have 
 \item{...}{Other options in \code{texreg} function.}
 }
 \value{
-Output from \code{texreg} function.
+Regression table to be shown in console if \code{format=="screen"} or \code{show.table==TRUE}, \code{NULL} if else.
 }
 \description{
 Drawing the coefficient table from model object(s). The wrapper function of \code{texreg}.

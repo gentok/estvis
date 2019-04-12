@@ -1,5 +1,5 @@
-# <code>estvis</code> Pac
-Developped by Gento Kato (Last Updated: 03/13/2019) 
+# <code>estvis</code> Package
+Developped by Gento Kato (Last Updated: 04/12/2019) 
 
 ## Description
 
@@ -25,11 +25,12 @@ Helps to visualize the estimates from various models.
 * <code>extract_gofchr</code> Extract Goodness-of-Fit statistics from model object (uses <code>[texreg](https://cran.r-project.org/web/packages/texreg/index.html)</code> behind).
 * <code>matrix_coefci</code> Export matrix of coefficients and confidence interval from model object.
 * <code>matrix_coeftest</code> Export matrix of coefficients, Standard Errors and P-values from model object.
-* <code>ilogit</code> Calculate inverse logit.
+* <code>ilogit</code> Calculate inverse logit (borrowed from <code>[faraway](https://cran.r-project.org/web/packages/faraway/index.html)</code> package).
 
 *more will be added in the future...*
 
 ## Updates Log
 
-* 02/13/2019 Version 0.1.0 released
+* 04/12/2019 Version 0.1.02 (small bug fixes)
 * 03/13/2019 Version 0.1.01 (small bug fixes)
+* 02/13/2019 Version 0.1.0 released

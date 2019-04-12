@@ -41,6 +41,8 @@ matrix_coefci <- function(m,
   
   if (is.null(vcov.est)) {
     tb <- cbind(coeftest(m)[,1], coefci(m, level = level, vcov. = vcov(m)))
+  } else if ("matrix" %in% class(vcov.est)) {
+    tb <- cbind(coeftest(m)[,1], coefci(m, level = level, vcov. = vcov.est))
   } else if (vcov.est=="robust") {
     tb <- cbind(coeftest(m)[,1], coefci(m, level = level, vcov. = vcovHC(m, type=robust.type, ...)))
   } else if (vcov.est=="cluster") {
@@ -54,9 +56,7 @@ matrix_coefci <- function(m,
     s <- Boot(m, R = boot.sims, ncores=ncores, ...)
     dst <- (1-level)/2
     tb <- cbind(apply(s$t,2,mean),t(apply(s$t,2,quantile,probs=c(dst,1-dst))))
-  } else if (class(vcov.est)=="matrix") {
-    tb <- cbind(coeftest(m)[,1], coefci(m, level = level, vcov. = vcov.est))
-  }
+  } 
 
   colnames(tb) <- c('CF', 'lowerCI', 'upperCI')
   tb <- data.frame(tb)
@@ -104,6 +104,8 @@ matrix_coeftest <- function(m,
   
   if (is.null(vcov.est)) {
     tb <- coeftest(m)
+  } else if ("matrix" %in% class(vcov.est)) {
+    tb <- coeftest(m, vcov. = vcov.est)
   } else if (vcov.est=="robust") {
     tb <- coeftest(m, vcov.=vcovHC(m, type=robust.type, ...))
   } else if (vcov.est=="cluster") {
@@ -120,9 +122,7 @@ matrix_coeftest <- function(m,
     set.seed(boot.seed)
     s <- Boot(m, R = boot.sims, ncores=ncores, ...)
     tb <- coeftest(m, vcov.=vcov(s))
-  } else if (class(vcov.est)=="matrix") {
-    tb <- coeftest(m, vcov. = vcov.est)
-  }
+  } 
   
   return(tb)
   

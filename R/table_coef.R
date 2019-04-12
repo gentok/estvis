@@ -117,7 +117,7 @@
 #' @param custom.variable.names List of alternative variable names in the output (character vector). The default is \code{NULL}. This is applied AFTER \code{drop.intercept} and \code{drop.variable.names} are applied, thus you don't need the names for dropped variables.
 #' @param footnote.psymbol Whether to add p-value symbols in the footnote.
 #' @param custom.footnote Custom footnote (character). The default is \code{NULL}. If assigned, footnote are added to the plot by \code{\link{plot_footnote}} function, and the function exports \code{gtable} object. Note that \code{gtable} object is less customizable than \code{ggplot} object. If it is also the case that \code{footnote.gof == TRUE}, custom footnote will be added as the new line after the GOF footnote.
-#' @param show.table Print the table at the end of function (boulean). The default is \code{FALSE}.
+#' @param show.table Return the "screen" table at the end of function (boulean). Always returned if \code{format=="screen"}. The default is \code{TRUE}.
 #' @param booktabs See \code{\link[texreg]{texreg}}.
 #' @param dcolumn See \code{\link[texreg]{texreg}}.
 #' @param use.packages See \code{\link[texreg]{texreg}}.
@@ -136,7 +136,7 @@
 #' @importFrom texreg htmlreg
 #' @importFrom texreg screenreg
 #'
-#' @return Output from \code{texreg} function.
+#' @return Regression table to be shown in console if \code{format=="screen"} or \code{show.table==TRUE}, \code{NULL} if else.
 #'
 #' @export
 table_coef<-function(m,
@@ -159,7 +159,7 @@ table_coef<-function(m,
                     custom.variable.names = NULL,
                     footnote.psymbol = TRUE,
                     custom.footnote = NULL,
-                    show.table = FALSE,
+                    show.table = TRUE,
                     # Other formattings for texreg
                     booktabs = TRUE,
                     dcolumn = FALSE,
@@ -228,7 +228,9 @@ table_coef<-function(m,
       # Put NULL Back into vcov
       vcov_i <- alt.vcov[[i]]
       if (!is.null(vcov_i)) {
-        if (is.na(vcov_i)) vcov_i <- NULL
+        if (!"matrix" %in% class(vcov_i)) {
+          if (is.na(vcov_i)) vcov_i <- NULL
+        }
       }
       # Put NULL Back into cluster
       cluster_i <- cluster.list[[i]]
@@ -338,6 +340,7 @@ table_coef<-function(m,
   }
   cat("Variable Manipulations: \n  ")
   print(convres, row.names=FALSE)
+  if (format!="screen") cat("\n")
   
   if (length(omitvarloc)>0) {
     mapcoefs <- as.list(newvarnames[-omitvarloc])
@@ -358,7 +361,7 @@ table_coef<-function(m,
   
   # Draw Table
   tb.screen <- screenreg(m,
-                         file = filepath,
+                         # file = filepath,
                          override.se = alt.se,
                          override.pvalues = alt.pval,
                          booktabs=booktabs,
@@ -372,73 +375,69 @@ table_coef<-function(m,
                          caption = caption,
                          include.deviance=include.deviance,
                          include.smooth=include.smooth,
-                         custom.note = footnote.text.html,
+                         custom.note = footnote.text.screen,
                          caption.above = caption.above,
                          single.row = single.row,
                          fontsize = fontsize,
                          stars = stars,
                          symbol = symbol.screen, ...)
+  
   if (format=="tex") {
-    tb.tex <- texreg(m,
-                     file = filepath,
-                     override.se = alt.se,
-                     override.pvalues = alt.pval,
-                     booktabs=booktabs,
-                     dcolumn=dcolumn,
-                     use.packages=use.packages,
-                     digits=digits,
-                     custom.model.names = m.names,
-                     custom.coef.map = mapcoefs,
-                     # custom.coef.names = newvarnames,
-                     # omit.coef="OMITTED",
-                     caption = caption,
-                     include.deviance=include.deviance,
-                     include.smooth=include.smooth,
-                     #reorder.coef = c(2:11,1),
-                     custom.note = footnote.text.tex,
-                     caption.above = caption.above,
-                     single.row = single.row,
-                     float.pos = float.pos,
-                     fontsize = fontsize,
-                     stars = stars,
-                     symbol = symbol.tex, ...)
-    tb <- tb.tex
+    texreg(m,
+           file = filepath,
+           override.se = alt.se,
+           override.pvalues = alt.pval,
+           booktabs=booktabs,
+           dcolumn=dcolumn,
+           use.packages=use.packages,
+           digits=digits,
+           custom.model.names = m.names,
+           custom.coef.map = mapcoefs,
+           # custom.coef.names = newvarnames,
+           # omit.coef="OMITTED",
+           caption = caption,
+           include.deviance=include.deviance,
+           include.smooth=include.smooth,
+           #reorder.coef = c(2:11,1),
+           custom.note = footnote.text.tex,
+           caption.above = caption.above,
+           single.row = single.row,
+           float.pos = float.pos,
+           fontsize = fontsize,
+           stars = stars,
+           symbol = symbol.tex, ...)
   } else if (format %in% c("html","doc")) {
     if (is.null(caption)==TRUE) caption <- "No Title"
-    tb.html <- htmlreg(m,
-                       file = filepath,
-                       override.se = alt.se,
-                       override.pvalues = alt.pval,
-                       booktabs=booktabs,
-                       dcolumn=dcolumn,
-                       use.packages=use.packages,
-                       digits=digits,
-                       custom.model.names = m.names,
-                       custom.coef.map = mapcoefs,
-                       # custom.coef.names = newvarnames,
-                       # omit.coef="OMITTED",
-                       caption = caption,
-                       include.deviance=include.deviance,
-                       include.smooth=include.smooth,
-                       #reorder.coef = c(2:11,1),
-                       custom.note = footnote.text.html,
-                       caption.above = caption.above,
-                       single.row = single.row,
-                       fontsize = fontsize,
-                       stars = stars,
-                       symbol = symbol.html, ...)
-    tb <- tb.html
-  } else if (format == "screen") {
-    tb <- tb.screen
-  } else {
+    htmlreg(m,
+            file = filepath,
+            override.se = alt.se,
+            override.pvalues = alt.pval,
+            booktabs=booktabs,
+            dcolumn=dcolumn,
+            use.packages=use.packages,
+            digits=digits,
+            custom.model.names = m.names,
+            custom.coef.map = mapcoefs,
+            # custom.coef.names = newvarnames,
+            # omit.coef="OMITTED",
+            caption = caption,
+            include.deviance=include.deviance,
+            include.smooth=include.smooth,
+            #reorder.coef = c(2:11,1),
+            custom.note = footnote.text.html,
+            caption.above = caption.above,
+            single.row = single.row,
+            fontsize = fontsize,
+            stars = stars,
+            symbol = symbol.html, ...)
+  } else if (format!="screen") {
     stop("Invalid format assigned.")
   }
   
-  if (show.table==TRUE){
-    print(tb.screen)
+  if (format == "screen") {
+    return(tb.screen)
+  } else if (show.table == TRUE) {
+    return(tb.screen)
   }
-  
-  return(tb)
 
-                      
 }

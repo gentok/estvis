@@ -530,7 +530,9 @@ plot_coef<-function(m,
       # Put NULL Back into vcov
       vcov_i <- vcov.list[[i]]
       if (!is.null(vcov_i)) {
-        if (is.na(vcov_i)) vcov_i <- NULL
+        if (!"matrix" %in% class(vcov_i)) {
+          if (is.na(vcov_i)) vcov_i <- NULL
+        }
       }
       # Put NULL Back into cluster
       cluster_i <- cluster.list[[i]]
@@ -568,7 +570,7 @@ plot_coef<-function(m,
   ## Drop variables (if there is any)
   dropvars <- character()
   if (drop.intercept) dropvars <- c(dropvars,drop.intercept.names)
-  if (!is.null(drop.variable.names)) drop.vars <- c(dropvars, drop.variable.names)
+  if (!is.null(drop.variable.names)) dropvars <- c(dropvars, drop.variable.names)
   if (length(dropvars) > 0) {
     coefs <- coefs[-which(coefs$vars %in% dropvars),]
   }
