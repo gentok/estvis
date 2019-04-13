@@ -487,7 +487,7 @@ summary.simupred <- function(object, ..., digits=3, print.rows=15) {
 #' @param name.facet.x Column name for the predictor that controls facets horizontally (optional). 
 #' @param name.facet.y Column name for the predictor that controls facets vertically (optional). 
 #' @param name.color Column name for the predictor that controls line colors (optional).
-#' @param name.linetype COlumn name for the predictor that controls line types (optional).
+#' @param name.linetype Column name for the predictor that controls line types (optional).
 #' @param name.fill Column name for the predictor that controls fill colors (optional).
 #' @param name.shape Column name for the predictor that controls point shapes (optional).
 #' @param line.width The width of line in line plot.
@@ -581,6 +581,145 @@ plot_simu <- function (predprof,
   if (!is.null(name.shape) & is.numeric(d[,name.shape])) {
     d[,name.shape] <- as.character(d[,name.shape])
   }
+  
+  # Check for duplicated missing/inconsistent label issue
+  if (!is.null(name.color) & !is.null(label.color)) {
+    if (label.color != "name.color") {
+      if (!is.null(name.linetype)) {
+        if (name.color==name.linetype) {
+          if (!is.null(label.linetype)) {
+            if (label.color != label.linetype) {
+              label.linetype <- label.color
+              warning("Since name.color == name.linetype, label.color copied to label.linetype.")
+            }
+          }
+        }
+      }
+      if (!is.null(name.fill)) {
+        if (name.color==name.fill) {
+          if (!is.null(label.fill)) {
+            if (label.color != label.fill) {
+              label.fill <- label.color
+              warning("Since name.color == name.fill, label.color copied to label.fill.")
+            }
+          }
+        }
+      }
+      if (!is.null(name.shape)) {
+        if (name.color==name.shape) {
+          if (!is.null(label.shape)) {
+            if (label.color != label.shape) {
+              label.shape <- label.color
+              warning("Since name.color == name.shape, label.color copied to label.shape.")
+            }
+          }
+        }
+      }
+    }
+  }
+  if (!is.null(name.linetype) & !is.null(label.linetype)) {
+    if (label.linetype != "name.linetype") {
+      if (!is.null(name.color)) {
+        if (name.linetype==name.color) {
+          if (!is.null(label.color)) {
+            if (label.color == "name.color") {
+              label.color <- label.linetype
+              warning("Since name.linetype == name.color, label.linetype copied to label.color.")
+            }
+          }
+        }
+      }
+      if (!is.null(name.fill)) {
+        if (name.linetype==name.fill) {
+          if (!is.null(label.fill)) {
+            if (label.linetype != label.fill) {
+              label.fill <- label.linetype
+              warning("Since name.linetype == name.fill, label.linetype copied to label.fill.")
+            }
+          }
+        }
+      }
+      if (!is.null(name.shape)) {
+        if (name.linetype==name.shape) {
+          if (!is.null(label.linetype)) {
+            if (label.linetype != label.shape) {
+              label.shape <- label.linetype
+              warning("Since name.linetype == name.shape, label.linetype copied to label.shape.")
+            }
+          }
+        }
+      }
+    }
+  }
+  if (!is.null(name.fill) & !is.null(label.fill)) {
+    if (label.fill != "name.fill") {
+      if (!is.null(name.color)) {
+        if (name.fill==name.color) {
+          if (!is.null(label.color)) {
+            if (label.color == "name.color") {
+              label.color <- label.fill
+              warning("Since name.fill == name.color, label.fill copied to label.color.")
+            }
+          }
+        }
+      }
+      if (!is.null(name.linetype)) {
+        if (name.fill==name.linetype) {
+          if (!is.null(label.linetype)) {
+            if (label.linetype == "name.linetype") {
+              label.linetype <- label.fill
+              warning("Since name.fill == name.linetype, label.fill copied to label.linetype.")
+            }
+          }
+        }
+      }
+      if (!is.null(name.shape)) {
+        if (name.fill==name.shape) {
+          if (!is.null(label.shape)) {
+            if (label.fill != label.shape) {
+              label.shape <- label.fill
+              warning("Since name.fill == name.shape, label.fill copied to label.shape.")
+            }
+          }
+        }
+      }
+    }
+  }
+  if (!is.null(name.shape) & !is.null(label.shape)) {
+    if (label.shape != "name.shape") {
+      if (!is.null(name.color)) {
+        if (name.shape==name.color) {
+          if (!is.null(label.color)) {
+            if (label.color == "name.color") {
+              label.color <- label.shape
+              warning("Since name.shape == name.color, label.shape copied to label.color.")
+            }
+          }
+        }
+      }
+      if (!is.null(name.linetype)) {
+        if (name.shape==name.linetype) {
+          if (!is.null(label.linetype)) {
+            if (label.linetype == "name.linetype") {
+              label.linetype <- label.shape
+              warning("Since name.shape == name.linetype, label.shape copied to label.linetype.")
+            }
+          }
+        }
+      }
+      if (!is.null(name.fill)) {
+        if (name.shape==name.fill) {
+          if (!is.null(label.fill)) {
+            if (label.fill == "name.fill") {
+              label.fill <- label.shape
+              warning("Since name.shape == name.fill, label.shape copied to label.fill.")
+            }
+          }
+        }
+      }
+    }
+  }
+  
   
   # Transform Labels
   if (!is.null(label.color) & !is.null(name.color)) {
@@ -698,7 +837,7 @@ plot_simu <- function (predprof,
       p <- p + geom_bar(aes_string(fill=name.fill), 
                         stat="identity", position=position_dodge(width=barpoint.gapwidth))
   } else if (type.est == "point") {
-      p <- p + geom_point(aes_string(shape=name.shape), size=point.size,
+      p <- p + geom_point(aes_string(shape=name.shape,color=name.color), size=point.size,
                           position=position_dodge(width=barpoint.gapwidth))
   } else {
       stop("Incompatible value of type.est")
@@ -710,11 +849,12 @@ plot_simu <- function (predprof,
       p <- p + geom_errorbar(aes_string(ymin=name.lowerCI, ymax=name.upperCI,
                                         color=name.color),
                              width=errorbar.width) + 
-        geom_point(aes_string(shape=name.shape), size=point.size)
+        geom_point(aes_string(shape=name.shape, color=name.color), size=point.size)
     } else if (type.ci == "errorbar") {
       p <- p + geom_errorbar(aes_string(ymin=name.lowerCI, ymax=name.upperCI,
-                                        color=name.color),
-                             width=errorbar.width, size = line.width)
+                                        color=name.color, linetype=name.linetype),
+                             width=errorbar.width, size = line.width,
+                             position=position_dodge(width=barpoint.gapwidth))
     } 
   }
   

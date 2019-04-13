@@ -51,7 +51,7 @@ the class of the variable defined by \code{name.x}. If not, choose manually from
 
 \item{name.color}{Column name for the predictor that controls line colors (optional).}
 
-\item{name.linetype}{COlumn name for the predictor that controls line types (optional).}
+\item{name.linetype}{Column name for the predictor that controls line types (optional).}
 
 \item{name.fill}{Column name for the predictor that controls fill colors (optional).}
 

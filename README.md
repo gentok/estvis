@@ -31,6 +31,7 @@ Helps to visualize the estimates from various models.
 
 ## Updates Log
 
-* 04/12/2019 Version 0.1.02 (small bug fixes)
+* 04/12/2019 Version 0.1.03 (bug fixes in plot_simu)
+* 04/12/2019 Version 0.1.02 (bug fixes in plot_coef and table_coef)
 * 03/13/2019 Version 0.1.01 (small bug fixes)
 * 02/13/2019 Version 0.1.0 released
