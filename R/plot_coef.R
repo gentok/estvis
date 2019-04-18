@@ -230,6 +230,7 @@ extract_gofchr <- function(m,
 #' @param category.names.angle The angle of category names (numeric). The default is \code{0} (horizontal).
 #' @param facet.names If not \code{NULL}, facet models by this identifier. Use \code{"m.names"} to facet each model separately (\code{overlap.names} is forced to \code{NULL}). 
 #' Alternatively, assign character vector of the same length as \code{m} (number of models).  
+#' @param facet.x.scale If \code{"fixed"} (default), all facetted models have same x axis limits. If \code{"free"} the scale is adjusted by each facetted panel. 
 #' @param title Plot title (character). The default is to include no title.
 #' @param y.title Y axis title (character). The default is to include no axis title.
 #' @param custom.variable.names Set of alternative variable names in the output (character vector). The default is \code{NULL}. This is applied AFTER \code{drop.intercept} and \code{drop.variable.names} are applied, thus you don't need the names for dropped variables.
@@ -385,6 +386,7 @@ plot_coef<-function(m,
                     category.names.location = "left",
                     category.names.angle = 0,
                     facet.names = NULL,
+                    facet.x.scale = "fixed",
                     title = NULL,
                     y.title = NULL,
                     custom.variable.names = NULL,
@@ -749,11 +751,13 @@ plot_coef<-function(m,
   }
   
   ## Intermediate Plot 2 (If Facetted)
+  setscale <- "free_y"
+  if (facet.x.scale=="free") setscale <- "free"
   if (add.cats==TRUE & add.facet==TRUE) {
     if (category.names.location=="left"){
       p <- p +
         facet_grid(cats ~ facetnames, margins=F, 
-                   scales="free_y",space="free_y",switch="y") +
+                   scales=setscale,space="free_y",switch="y") +
         theme(strip.placement = "outside",
               strip.text.y = element_text(size=11, angle=category.names.angle+180, face="bold", hjust=0),
               strip.text.x = element_text(size=11, face="bold"))
@@ -762,14 +766,14 @@ plot_coef<-function(m,
         category.names.angle <- 360-category.names.angle
       }
       p <- p +
-        facet_grid(cats ~ facetnames,margins=F,scales="free_y",space="free_y") +
+        facet_grid(cats ~ facetnames,margins=F,scales=setscale,space="free_y") +
         theme(strip.text.y = element_text(size=11, angle=category.names.angle, face="bold", hjust=1),
               strip.text.x = element_text(size=11, face="bold"))
     }
   } else if (add.cats==TRUE) {
     if (category.names.location=="left"){
       p <- p +
-        facet_grid(cats ~ ., margins=F,scales="free_y",space="free_y",switch="y") +
+        facet_grid(cats ~ ., margins=F,scales=setscale,space="free_y",switch="y") +
         theme(strip.placement = "outside",
               strip.text.y = element_text(size=11, angle=category.names.angle+180, face="bold", hjust=0))
     } else if (category.names.location=="right"){
@@ -777,12 +781,12 @@ plot_coef<-function(m,
         category.names.angle <- 360-category.names.angle
       }
       p <- p +
-        facet_grid(cats ~ .,margins=F,scales="free_y",space="free_y") +
+        facet_grid(cats ~ .,margins=F,scales=setscale,space="free_y") +
         theme(strip.text.y = element_text(size=11, angle=category.names.angle, face="bold", hjust=1))
     }
   } else if (add.facet==TRUE) {
     p <- p +
-      facet_grid(. ~ facetnames, margins=F) +
+      facet_grid(. ~ facetnames, scales=setscale, margins=F) +
       theme(strip.placement = "outside",
             strip.text.x = element_text(size=11, face="bold"))
   }

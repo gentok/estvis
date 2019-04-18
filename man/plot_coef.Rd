@@ -15,15 +15,16 @@ plot_coef(m, m.names = NULL, order.variable = "original",
   overlap.shape.index = NULL, overlap.linetype.index = NULL,
   overlap.legend.position = "bottom", category.names = NULL,
   category.names.location = "left", category.names.angle = 0,
-  facet.names = NULL, title = NULL, y.title = NULL,
-  custom.variable.names = NULL, custom.x.title = NULL,
-  custom.x.lim = NULL, custom.x.breaks = NULL, custom.themes = NULL,
-  footnote.gof = FALSE, footnote.gof.nobs = "right",
-  footnote.gof.extracts = c("AIC", "Adj. R$^2$", "Log Likelihood"),
-  footnote.gof.reorder = NULL, footnote.gof.linebreak = TRUE,
-  custom.footnote = NULL, footnote.caption = FALSE,
-  footnote.fontsize = NULL, footnote.fontcol = "black",
-  footnote.align = "right", footnote.distance.from.side = 0.05,
+  facet.names = NULL, facet.x.scale = "fixed", title = NULL,
+  y.title = NULL, custom.variable.names = NULL,
+  custom.x.title = NULL, custom.x.lim = NULL, custom.x.breaks = NULL,
+  custom.themes = NULL, footnote.gof = FALSE,
+  footnote.gof.nobs = "right", footnote.gof.extracts = c("AIC",
+  "Adj. R$^2$", "Log Likelihood"), footnote.gof.reorder = NULL,
+  footnote.gof.linebreak = TRUE, custom.footnote = NULL,
+  footnote.caption = FALSE, footnote.fontsize = NULL,
+  footnote.fontcol = "black", footnote.align = "right",
+  footnote.distance.from.side = 0.05,
   footnote.distance.from.bottom = 0.75,
   footnote.bottom.expand.rate = NULL, show.plot = TRUE,
   flip.plot = FALSE, ...)
@@ -64,7 +65,7 @@ function is used.
 Ignored if \code{NULL} (default) or the \code{m} is not model object. 
 Must have the same length as \code{m} if it is a list.}
 
-\item{robust.type}{The type of leverage adjustment passed to \code{[sandwich]{vcovHC}} 
+\item{robust.type}{The type of leverage adjustment passed to \code{\link[sandwich]{vcovHC}} 
 (applied only when \code{vcov.est=="robust"}).}
 
 \item{cluster.var}{Single or a list of \code{vector}, \code{matrix}, or \code{data.frame} 
@@ -145,6 +146,8 @@ thus you don't need the names for dropped variables).}
 \item{facet.names}{If not \code{NULL}, facet models by this identifier. Use \code{"m.names"} to facet each model separately (\code{overlap.names} is forced to \code{NULL}). 
 Alternatively, assign character vector of the same length as \code{m} (number of models).}
 
+\item{facet.x.scale}{If \code{"fixed"} (default), all facetted models have same x axis limits. If \code{"free"} the scale is adjusted by each facetted panel.}
+
 \item{title}{Plot title (character). The default is to include no title.}
 
 \item{y.title}{Y axis title (character). The default is to include no axis title.}
@@ -189,7 +192,7 @@ Alternatively, assign character vector of the same length as \code{m} (number of
 
 \item{flip.plot}{Flip the x and y axis of the plot. The default is \code{FALSE}. If \code{TRUE}, the variable names will be printed as columns and coefficients will be printed as rows. The original design does not intended for flipping the axis, thus flipping it may cause problems in the layout.}
 
-\item{...}{Additional arguments passed to \code{[sandwich]{vcovHC}}, \code{[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}.}
+\item{...}{Additional arguments passed to \code{\link[sandwich]{vcovHC}}, \code{\link[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}.}
 }
 \value{
 \code{ggplot} object without footnote (axis and theme settings can be added later). If footnote is added, then \code{gtable} object is the output. It is impossible to add \code{ggplot} elements to the \code{gtable} object. \code{gtable} plot can be viewed by using either \code{\link[grid]{grid.draw}()} or \code{\link[graphics]{plot}()} function.
