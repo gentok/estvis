@@ -173,7 +173,7 @@ extract_gofchr <- function(m,
 #' function is used.
 #' Ignored if \code{NULL} (default) or the \code{m} is not model object. 
 #' Must have the same length as \code{m} if it is a list.
-#' @param robust.type The type of leverage adjustment passed to \code{[sandwich]{vcovHC}} 
+#' @param robust.type The type of leverage adjustment passed to \code{\link[sandwich]{vcovHC}} 
 #' (applied only when \code{vcov.est=="robust"}).
 #' @param cluster.var Single or a list of \code{vector}, \code{matrix}, or \code{data.frame} 
 #' of cluster variables, where each column is a separate variable. Alternatively, 
@@ -252,7 +252,7 @@ extract_gofchr <- function(m,
 #' @param footnote.bottom.expand.rate The expansion rate of the bottom margin of the graph to incorporate footnote (numeric). The value of \code{1} indicates no expansion. If \code{NULL} (default), it is set to the number of lines in the footnote + 1.
 #' @param show.plot Print the plot at the end of function (boulean). The default is \code{TRUE}.
 #' @param flip.plot Flip the x and y axis of the plot. The default is \code{FALSE}. If \code{TRUE}, the variable names will be printed as columns and coefficients will be printed as rows. The original design does not intended for flipping the axis, thus flipping it may cause problems in the layout.
-#' @param ... Additional arguments passed to \code{[sandwich]{vcovHC}}, \code{[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}. 
+#' @param ... Additional arguments passed to \code{\link[sandwich]{vcovHC}}, \code{\link[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}. 
 #'
 #' @return \code{ggplot} object without footnote (axis and theme settings can be added later). If footnote is added, then \code{gtable} object is the output. It is impossible to add \code{ggplot} elements to the \code{gtable} object. \code{gtable} plot can be viewed by using either \code{\link[grid]{grid.draw}()} or \code{\link[graphics]{plot}()} function.
 #'

@@ -1,5 +1,5 @@
 # <code>estvis</code> Package
-Developped by Gento Kato (Last Updated: 04/12/2019) 
+Developped by Gento Kato (Last Updated: 04/17/2019) 
 
 ## Description
 
@@ -31,6 +31,7 @@ Helps to visualize the estimates from various models.
 
 ## Updates Log
 
+* 04/17/2019 Version 0.1.04 (adjustment in ilogit function to avoid NaN)
 * 04/12/2019 Version 0.1.03 (bug fixes in plot_simu)
 * 04/12/2019 Version 0.1.02 (bug fixes in plot_coef and table_coef)
 * 03/13/2019 Version 0.1.01 (small bug fixes)
