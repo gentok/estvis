@@ -10,21 +10,21 @@ plot_coef(m, m.names = NULL, order.variable = "original",
   boot.ncores = 1, show.ci = TRUE, level.ci = 0.95,
   drop.intercept = FALSE, drop.intercept.names = "(Intercept)",
   drop.variable.names = NULL, point.shape = 16, point.size = 1.5,
-  ci.linetype = 1, ci.size = 0.5, ci.height = 0.2,
-  overlap.names = "m.names", overlap.gapwidth = 0.5,
-  overlap.shape.index = NULL, overlap.linetype.index = NULL,
-  overlap.legend.position = "bottom", category.names = NULL,
-  category.names.location = "left", category.names.angle = 0,
-  facet.names = NULL, facet.x.scale = "fixed", title = NULL,
-  y.title = NULL, custom.variable.names = NULL,
-  custom.x.title = NULL, custom.x.lim = NULL, custom.x.breaks = NULL,
-  custom.themes = NULL, footnote.gof = FALSE,
-  footnote.gof.nobs = "right", footnote.gof.extracts = c("AIC",
-  "Adj. R$^2$", "Log Likelihood"), footnote.gof.reorder = NULL,
-  footnote.gof.linebreak = TRUE, custom.footnote = NULL,
-  footnote.caption = FALSE, footnote.fontsize = NULL,
-  footnote.fontcol = "black", footnote.align = "right",
-  footnote.distance.from.side = 0.05,
+  point.color = "black", ci.linetype = 1, ci.size = 0.5,
+  ci.height = 0.2, overlap.names = "m.names", overlap.gapwidth = 0.5,
+  overlap.shape.index = NULL, overlap.color.index = NULL,
+  overlap.linetype.index = NULL, overlap.legend.position = "bottom",
+  category.names = NULL, category.names.location = "left",
+  category.names.angle = 0, facet.names = NULL,
+  facet.x.scale = "fixed", title = NULL, y.title = NULL,
+  custom.variable.names = NULL, custom.x.title = NULL,
+  custom.x.lim = NULL, custom.x.breaks = NULL, custom.themes = NULL,
+  footnote.gof = FALSE, footnote.gof.nobs = "right",
+  footnote.gof.extracts = c("AIC", "Adj. R$^2$", "Log Likelihood"),
+  footnote.gof.reorder = NULL, footnote.gof.linebreak = TRUE,
+  custom.footnote = NULL, footnote.caption = FALSE,
+  footnote.fontsize = NULL, footnote.fontcol = "black",
+  footnote.align = "right", footnote.distance.from.side = 0.05,
   footnote.distance.from.bottom = 0.75,
   footnote.bottom.expand.rate = NULL, show.plot = TRUE,
   flip.plot = FALSE, ...)
@@ -100,6 +100,8 @@ The default is \code{16} (filled circle).}
 
 \item{point.size}{Size of point outputs (numeric). The default is \code{1.5}.}
 
+\item{point.color}{Color of point (and ci) outputs (numeric). The default is \code{"black"}.}
+
 \item{ci.linetype}{The line type of confidence interval outputs (numeric). 
 The default is \code{1}.}
 
@@ -118,6 +120,12 @@ You can alternatively give a character vector of the same length as \code{m}.}
 The default value is \code{0.5}.}
 
 \item{overlap.shape.index}{The index of shapes for overlapped point ouputs. 
+Must be in the same length as the list \code{m}. 
+The first element of the vector is the shape for \code{m}, 
+then from the second element, the order must correspond with the order in the list \code{m}. 
+If \code{NULL}, \code{point.shape} is applied to all classes.}
+
+\item{overlap.color.index}{The index of colors for overlapped point ouputs. 
 Must be in the same length as the list \code{m}. 
 The first element of the vector is the shape for \code{m}, 
 then from the second element, the order must correspond with the order in the list \code{m}. 

@@ -196,6 +196,7 @@ extract_gofchr <- function(m,
 #' @param point.shape Shape of the point outputs (numeric/character). 
 #' The default is \code{16} (filled circle).
 #' @param point.size Size of point outputs (numeric). The default is \code{1.5}.
+#' @param point.color Color of point (and ci) outputs (numeric). The default is \code{"black"}.
 #' @param ci.linetype The line type of confidence interval outputs (numeric). 
 #' The default is \code{1}.
 #' @param ci.size The line width of confidence interval outputs (numeric). 
@@ -218,6 +219,11 @@ extract_gofchr <- function(m,
 #' The first element of the vector is the shape for \code{m}, then from the second element, 
 #' the order must correspond with the order in the list \code{m}. If \code{NULL}, 
 #' the number corresponding with the order is assigned to each class.
+#' @param overlap.color.index The index of colors for overlapped point ouputs. 
+#' Must be in the same length as the list \code{m}. 
+#' The first element of the vector is the shape for \code{m}, 
+#' then from the second element, the order must correspond with the order in the list \code{m}. 
+#' If \code{NULL}, \code{point.shape} is applied to all classes.
 #' @param overlap.legend.position The position of the legend for overlapping classess. 
 #' See \code{legend.position} in ggplot theme for possible values. 
 #' The default is \code{"bottom"}.
@@ -374,12 +380,14 @@ plot_coef<-function(m,
                     drop.variable.names = NULL,
                     point.shape = 16,
                     point.size = 1.5,
+                    point.color = "black",
                     ci.linetype = 1,
                     ci.size = 0.5,
                     ci.height = 0.2,
                     overlap.names = "m.names",
                     overlap.gapwidth = 0.5,
                     overlap.shape.index = NULL,
+                    overlap.color.index = NULL,
                     overlap.linetype.index = NULL,
                     overlap.legend.position = "bottom",
                     category.names = NULL,
@@ -659,6 +667,11 @@ plot_coef<-function(m,
     } else {
       overlap.linetypes <- seq(1,classn,1)
     }
+    if(is.null(overlap.color.index)==FALSE){
+      overlap.colors <- overlap.color.index
+    } else {
+      overlap.colors <- seq(point.color,classn,1)
+    }
   }
   
   vn0 <- unique(coefs$vars)
@@ -728,25 +741,27 @@ plot_coef<-function(m,
   
   ## Intermediate Plot
   if (add.overlap==FALSE) {
-    p <- p + geom_point(shape=point.shape, size=point.size)
+    p <- p + geom_point(shape=point.shape, size=point.size, color=point.color)
     if (show.ci==TRUE) {
       p <- p +
         geom_errorbar(aes(ymin=lowerCI, ymax=upperCI), 
-                      linetype=ci.linetype, width=ci.height, size=ci.size)
+                      linetype=ci.linetype, width=ci.height, size=ci.size, color=point.color)
     }
   } else {
     p <- p +
-      geom_point(aes(shape=overlapnames), 
+      geom_point(aes(shape=overlapnames, color=overlapnames), 
                  size=point.size, 
                  position=position_dodge(width = -overlap.gapwidth)) +
       scale_shape_manual(name="Class",values=overlap.shapes) +
+      scale_color_manual(name="Class",values=overlap.colors) +
       theme(legend.position=overlap.legend.position)
     if (show.ci==TRUE) {
       p <- p +
-        geom_errorbar(aes(ymin=lowerCI, ymax=upperCI, linetype=overlapnames), 
+        geom_errorbar(aes(ymin=lowerCI, ymax=upperCI, linetype=overlapnames, color=overlapnames), 
                       width=ci.height, size=ci.size, 
                       position=position_dodge(width = -overlap.gapwidth)) +
-        scale_linetype_manual(name="Class",values=overlap.linetypes)
+        scale_linetype_manual(name="Class",values=overlap.linetypes) + 
+        scale_color_manual(name="Class",values=overlap.colors)
     }
   }
   

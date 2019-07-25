@@ -31,6 +31,7 @@ Helps to visualize the estimates from various models.
 
 ## Updates Log
 
+* 07/24/2019 Version 0.1.06 (bug fixes in plot_coef)
 * 04/18/2019 Version 0.1.05 (facet.x.scale argument added to plot_coef)
 * 04/17/2019 Version 0.1.04 (adjustment in ilogit function to avoid NaN)
 * 04/12/2019 Version 0.1.03 (bug fixes in plot_simu)
