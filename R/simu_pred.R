@@ -346,7 +346,7 @@ simu_pred <- function(m,
     meanpred <- mean(predstore)
     medianpred <- median(predstore)
     sdpred <- sd(predstore)
-    cipred <- quantile(predstore, probs=c(1-level.ci,level.ci))
+    cipred <- quantile(predstore, probs=c((1-level.ci)/2,level.ci + (1-level.ci)/2))
     predsum[i,] <- c(meanpred, medianpred, sdpred, cipred)
   }
   predsum <- as.data.frame(predsum)
