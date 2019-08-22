@@ -258,7 +258,7 @@ table_coef<-function(m,
   # Symbol settings
   symbol.tex <- symbol.html <- symbol.screen <- symbol
   if (symbol=="dagger"){
-    symbol.tex <- "\\\\dagger"
+    symbol.tex <- "\\dagger"
     symbol.html <- "&dagger;"
     symbol.screen <- "+"
   }
@@ -350,14 +350,15 @@ table_coef<-function(m,
     names(mapcoefs) <- varnames
   }
   
-  if (class(order.variable)=="numeric") {
+  if (is.numeric(order.variable)) {
     if (length(order.variable)==length(mapcoefs)) {
-      mapcoefs <- mapcoefs[order(order.variable)]
+      #mapcoefs <- mapcoefs[order(order.variable)]
+      mapcoefs <- mapcoefs[order.variable]
     } else {
       warning("Length of order.variable and kept unique variable names differ.
            Order kept as original.")
     }
-  }  
+  }
   
   # Draw Table
   tb.screen <- screenreg(m,
