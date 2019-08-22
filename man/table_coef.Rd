@@ -14,7 +14,7 @@ table_coef(m, format = "screen", file.name = NULL, dir = NULL,
   custom.footnote = NULL, show.table = TRUE, booktabs = TRUE,
   dcolumn = FALSE, use.packages = FALSE, stars = c(0.001, 0.01, 0.05,
   0.1), symbol = "dagger", caption.above = TRUE, single.row = FALSE,
-  float.pos = "h!!", fontsize = "footnotesize",
+  float.pos = "ht!!", fontsize = "footnotesize",
   include.deviance = FALSE, include.smooth = FALSE, ...)
 }
 \arguments{

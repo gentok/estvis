@@ -168,7 +168,7 @@ table_coef<-function(m,
                     symbol = "dagger",
                     caption.above = TRUE,
                     single.row = FALSE,
-                    float.pos = "h!!",
+                    float.pos = "ht!!",
                     fontsize = "footnotesize",
                     # Other settings for extract method
                     include.deviance = FALSE,
@@ -258,7 +258,7 @@ table_coef<-function(m,
   # Symbol settings
   symbol.tex <- symbol.html <- symbol.screen <- symbol
   if (symbol=="dagger"){
-    symbol.tex <- "\\dagger"
+    symbol.tex <- "\\\\dagger"
     symbol.html <- "&dagger;"
     symbol.screen <- "+"
   }
