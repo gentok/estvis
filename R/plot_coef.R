@@ -670,7 +670,12 @@ plot_coef<-function(m,
     if(is.null(overlap.color.index)==FALSE){
       overlap.colors <- overlap.color.index
     } else {
-      overlap.colors <- seq(point.color,classn,1)
+      if (is.numeric(point.color)==FALSE) {
+        point.colorx = 1 
+      } else {
+        point.colorx = point.color
+      }
+      overlap.colors <- seq(point.colorx,classn,1)
     }
   }
   
