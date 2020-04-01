@@ -31,7 +31,8 @@ Helps to visualize the estimates from various models.
 
 ## Updates Log
 
-* 11/06/2019 Version 0.1.10 (small bug fix & the addition of encoding_from, encoding_to arguments to table_coef)
+* 04/01/2020 Version 0.1.11 (small bug fix in table_coef)
+* 04/01/2020 Version 0.1.10 (small bug fix & the addition of encoding_from, encoding_to arguments to table_coef)
 * 11/06/2019 Version 0.1.09 (small bug fix in plot_coef)
 * 08/21/2019 Version 0.1.08 (small bug fix in table_coef)
 * 07/28/2019 Version 0.1.07 (change simu_pred CI from one-sided to two-sided)

@@ -1,6 +1,6 @@
 Package: estvis
 Title: Visualize estimates from various models
-Version: 0.1.10
+Version: 0.1.11
 Authors@R: person("Gento", "Kato", email = "gento.badger@gmail.com", role = "cre")
 Description: Researchers frequently visualizes the estimates of models. This package helps to simplify the visualization procedure by providing canned (but also highly customizable) functions to extract estimates and present them in intuitive way.
 Depends: R (>= 3.4.0)

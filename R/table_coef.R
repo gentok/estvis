@@ -273,14 +273,14 @@ table_coef<-function(m,
   if (footnote.psymbol==TRUE){
     footnote.text.tex <- footnote.text.html <- footnote.text.screen <- "%stars"
     if (is.null(custom.footnote)==FALSE){
-      footnote.text.tex <- paste("\\parbox{.4\\linewidth}{\\vspace{2pt}%stars. \\\\", custom.footnote, "}")
+      footnote.text.tex <- paste("\\parbox{1.0\\linewidth}{\\vspace{2pt}%stars. \\\\", custom.footnote, "}")
       footnote.text.html <- paste("%stars <br> ", custom.footnote)
       footnote.text.screen <- paste("%stars", custom.footnote)
     }
   } else {
     footnote.text.tex <- footnote.text.html <- footnote.text.screen <- ""
     if (is.null(custom.footnote)==FALSE){
-      footnote.text.tex <- paste("\\parbox{.4\\linewidth}{\\vspace{2pt}", custom.footnote, "}")
+      footnote.text.tex <- paste("\\parbox{1.0\\linewidth}{\\vspace{2pt}", custom.footnote, "}")
       footnote.text.html <- footnote.text.screen <- custom.footnote
     }
   }
