@@ -4,11 +4,24 @@
 \alias{simu_interact}
 \title{Simulate conditional effect from models with interaction terms}
 \usage{
-simu_interact(m, var1, var1.label = NULL, moveprof = NULL,
-  var2 = NULL, steps = 100, y.label = "auto", show.ci = TRUE,
-  level.ci = 0.95, vcov.est = NULL, robust.type = "HC1",
-  cluster.var = NULL, iterate.num = 1000, iterate.seed = 578,
-  rawbeta = NULL, ...)
+simu_interact(
+  m,
+  var1,
+  var1.label = NULL,
+  moveprof = NULL,
+  var2 = NULL,
+  steps = 100,
+  y.label = "auto",
+  show.ci = TRUE,
+  level.ci = 0.95,
+  vcov.est = NULL,
+  robust.type = "HC1",
+  cluster.var = NULL,
+  iterate.num = 1000,
+  iterate.seed = 578,
+  rawbeta = NULL,
+  ...
+)
 }
 \arguments{
 \item{m}{Single model object.}
@@ -42,7 +55,7 @@ If \code{NULL} (default), use the standard variance covariance matrix stored the
 
 \item{robust.type}{The type of leverage adjustment passed to \code{\link[sandwich]{vcovHC}} (applied only when \code{vcov.est=="robust"}).}
 
-\item{cluster.var}{A \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see Details in \code{\link[multiwayvcov]{cluster}}. Applied only when \code{vcov.est=="cluster"}.)}
+\item{cluster.var}{A \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see Details in \code{\link[multiwayvcov]{cluster.vcov}}. Applied only when \code{vcov.est=="cluster"}.)}
 
 \item{iterate.num}{The number of iteration in simulation.}
 
@@ -50,7 +63,7 @@ If \code{NULL} (default), use the standard variance covariance matrix stored the
 
 \item{rawbeta}{The matrix of pre-simulated beta. Columns are variables, raws are simulated cases. Used only when \code{vcov.est=="rawbeta"}.}
 
-\item{...}{Additional arguments passed to \code{\link[sandwich]{vcovHC}}, \code{\link[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}.}
+\item{...}{Additional arguments passed to \code{\link[sandwich]{vcovHC}}, \code{\link[multiwayvcov]{cluster.vcov}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}.}
 }
 \value{
 A list of: 

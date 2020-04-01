@@ -4,9 +4,17 @@
 \alias{matrix_coefci}
 \title{Export Matrix (Data.Frame) of Coefficients and Confidence Interval}
 \usage{
-matrix_coefci(m, level = 0.95, vcov.est = NULL, robust.type = "HC1",
-  cluster.var = NULL, boot.sims = 500, boot.seed = 578,
-  ncores = "auto", ...)
+matrix_coefci(
+  m,
+  level = 0.95,
+  vcov.est = NULL,
+  robust.type = "HC1",
+  cluster.var = NULL,
+  boot.sims = 500,
+  boot.seed = 578,
+  ncores = "auto",
+  ...
+)
 }
 \arguments{
 \item{m}{A single model object.}

@@ -4,16 +4,35 @@
 \alias{plot_simu}
 \title{Plotting Simulated Outcome}
 \usage{
-plot_simu(predprof, name.x, addprof = NULL, name.est = "Mean",
-  show.ci = TRUE, name.lowerCI = "lowerCI", name.upperCI = "upperCI",
-  type.est = "auto", type.ci = "auto", name.facet.x = NULL,
-  name.facet.y = NULL, name.color = NULL, name.linetype = NULL,
-  name.fill = NULL, name.shape = NULL, line.width = 0.7,
-  barpoint.gapwidth = 0.5, point.size = 2, errorbar.width = 0.5,
-  ribbon.alpha = 0.5, label.color = "name.color",
-  label.linetype = "name.linetype", label.fill = "name.fill",
-  label.shape = "name.shape", label.x = "name.x", label.y = "auto",
-  titletxt = NULL)
+plot_simu(
+  predprof,
+  name.x,
+  addprof = NULL,
+  name.est = "Mean",
+  show.ci = TRUE,
+  name.lowerCI = "lowerCI",
+  name.upperCI = "upperCI",
+  type.est = "auto",
+  type.ci = "auto",
+  name.facet.x = NULL,
+  name.facet.y = NULL,
+  name.color = NULL,
+  name.linetype = NULL,
+  name.fill = NULL,
+  name.shape = NULL,
+  line.width = 0.7,
+  barpoint.gapwidth = 0.5,
+  point.size = 2,
+  errorbar.width = 0.5,
+  ribbon.alpha = 0.5,
+  label.color = "name.color",
+  label.linetype = "name.linetype",
+  label.fill = "name.fill",
+  label.shape = "name.shape",
+  label.x = "name.x",
+  label.y = "auto",
+  titletxt = NULL
+)
 }
 \arguments{
 \item{predprof}{Predictions in either \code{simupred} (exported from \code{\link{simu_pred}} 

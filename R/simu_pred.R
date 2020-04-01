@@ -1,29 +1,6 @@
 # Following variables are global
 globalVariables(c("Mean","Median","SE","lowerCI","upperCI"))
 
-#' Inverse Logit Transformation
-#' 
-#' @description Computes the inverse logit transformation. 
-#' The copy of \code{\link[faraway]{ilogit}()} function.
-#' 
-#' @return \code{exp(x)/(1+exp(x))} 
-#' 
-#' @param x a numeric vector
-#' 
-#' @export
-ilogit <- function (x) 
-{
-  if (any(omit <- is.na(x))) {
-    lv <- x
-    lv[omit] <- NA
-    if (any(!omit)) 
-      lv[!omit] <- Recall(x[!omit])
-    return(lv)
-  }
-  #exp(x)/(1 + exp(x))
-  1/ ( 1  + exp(-x))
-}
-
 #' Exporting Simulated Predictions
 #'
 #' @description Generate prediction through Monte Carlo simulation based on  approximation. 
@@ -110,12 +87,12 @@ ilogit <- function (x)
 #' If \code{"rawbeta"}, use pre-simulated beta given in \code{rawbeta} argument.
 #' If \code{NULL} (default), use the standard variance covariance matrix stored the model. You can also directly set the variance-covariance matrix created by \code{\link[stats]{vcov}()} or \code{\link[sandwich]{vcovHC}()}.
 #' @param robust.type The type of leverage adjustment passed to \code{\link[sandwich]{vcovHC}} (applied only when \code{vcov.est=="robust"}).
-#' @param cluster.var A \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see Details in \code{\link[multiwayvcov]{cluster}}. Applied only when \code{vcov.est=="cluster"}.)
+#' @param cluster.var A \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see Details in \code{\link[multiwayvcov]{cluster.vcov}}. Applied only when \code{vcov.est=="cluster"}.)
 #' @param iterate.num The number of iteration in simulation.
 #' @param iterate.seed The seed value for random number generator used for the draws from multivariate normal distribution.
 #' @param rawbeta The matrix of pre-simulated beta. Columns are variables, raws are simulated cases. Used only when \code{vcov.est=="rawbeta"}.
 #' @param dropbeta If not \code{NULL}, beta of specified locations (numeric vector) are not used for prediction (rarely used).
-#' @param ... Additional arguments passed to \code{\link[sandwich]{vcovHC}}, \code{\link[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}. 
+#' @param ... Additional arguments passed to \code{\link[sandwich]{vcovHC}}, \code{\link[multiwayvcov]{cluster.vcov}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}. 
 #'
 #' @return A list of: 
 #' \itemize{
@@ -133,6 +110,7 @@ ilogit <- function (x)
 #' @importFrom stats model.matrix
 #' @importFrom stats vcov
 #' @importFrom stats pnorm 
+#' @importFrom stats plogis
 #' @importFrom stats sd
 #' @importFrom stats model.matrix
 #' @importFrom stats median
@@ -325,7 +303,7 @@ simu_pred <- function(m,
         if(m$family$family=="gaussian"){
           pred <- pred
         } else if(m$family$family=="binomial" & m$family$link=="logit") {
-          pred <- ilogit(pred)
+          pred <- plogis(pred)
         } else if (m$family$family=="binomial" & m$family$link=="probit") {
           pred <- pnorm(pred)
         } else if (m$family$family=="poisson") {

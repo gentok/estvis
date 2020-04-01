@@ -9,22 +9,27 @@
 \alias{tiff_save}
 \title{Save Plots}
 \usage{
-plot_save(p, w = NULL, h = NULL, res = 120, file = NULL,
-  dir = NULL, format = "pdf", show.plot = TRUE, ...)
+plot_save(
+  p,
+  w = NULL,
+  h = NULL,
+  res = 120,
+  file = NULL,
+  dir = NULL,
+  format = "pdf",
+  show.plot = TRUE,
+  ...
+)
 
 pdf_save(p, w = 8, h = 6, file = NULL, dir = NULL, ...)
 
-bmp_save(p, w = 800, h = 600, res = 120, file = NULL, dir = NULL,
-  ...)
+bmp_save(p, w = 800, h = 600, res = 120, file = NULL, dir = NULL, ...)
 
-png_save(p, w = 800, h = 600, res = 120, file = NULL, dir = NULL,
-  ...)
+png_save(p, w = 800, h = 600, res = 120, file = NULL, dir = NULL, ...)
 
-jpeg_save(p, w = 800, h = 600, res = 120, file = NULL,
-  dir = NULL, ...)
+jpeg_save(p, w = 800, h = 600, res = 120, file = NULL, dir = NULL, ...)
 
-tiff_save(p, w = 800, h = 600, res = 120, file = NULL,
-  dir = NULL, ...)
+tiff_save(p, w = 800, h = 600, res = 120, file = NULL, dir = NULL, ...)
 }
 \arguments{
 \item{p}{The \code{ggplot} object or \code{gtable} object.}

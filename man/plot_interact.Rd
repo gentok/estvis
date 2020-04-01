@@ -4,17 +4,36 @@
 \alias{plot_interact}
 \title{Plot Interaction Effects}
 \usage{
-plot_interact(interactprof, name.var2 = NULL, label.var2 = "name.var2",
-  label.y = "auto", hline0 = TRUE, addprof = NULL,
-  name.est = "Mean", show.ci = TRUE, name.lowerCI = "lowerCI",
-  name.upperCI = "upperCI", type.est = "auto", type.ci = "auto",
-  name.facet.x = NULL, name.facet.y = NULL, name.color = NULL,
-  name.linetype = NULL, name.fill = NULL, name.shape = NULL,
-  line.width = 0.7, barpoint.gapwidth = 0.5, point.size = 2,
-  errorbar.width = 0.5, ribbon.alpha = 0.5,
-  label.color = "name.color", label.linetype = "name.linetype",
-  label.fill = "name.fill", label.shape = "name.shape",
-  titletxt = NULL)
+plot_interact(
+  interactprof,
+  name.var2 = NULL,
+  label.var2 = "name.var2",
+  label.y = "auto",
+  hline0 = TRUE,
+  addprof = NULL,
+  name.est = "Mean",
+  show.ci = TRUE,
+  name.lowerCI = "lowerCI",
+  name.upperCI = "upperCI",
+  type.est = "auto",
+  type.ci = "auto",
+  name.facet.x = NULL,
+  name.facet.y = NULL,
+  name.color = NULL,
+  name.linetype = NULL,
+  name.fill = NULL,
+  name.shape = NULL,
+  line.width = 0.7,
+  barpoint.gapwidth = 0.5,
+  point.size = 2,
+  errorbar.width = 0.5,
+  ribbon.alpha = 0.5,
+  label.color = "name.color",
+  label.linetype = "name.linetype",
+  label.fill = "name.fill",
+  label.shape = "name.shape",
+  titletxt = NULL
+)
 }
 \arguments{
 \item{interactprof}{Conditional coefficients in either \code{simuinteract} (exported from \code{\link{simu_interact}} 

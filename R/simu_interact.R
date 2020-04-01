@@ -58,11 +58,11 @@
 #' If \code{"rawbeta"}, use pre-simulated beta given in \code{rawbeta} argument.
 #' If \code{NULL} (default), use the standard variance covariance matrix stored the model. You can also directly set the variance-covariance matrix created by \code{\link[stats]{vcov}()} or \code{\link[sandwich]{vcovHC}()}.
 #' @param robust.type The type of leverage adjustment passed to \code{\link[sandwich]{vcovHC}} (applied only when \code{vcov.est=="robust"}).
-#' @param cluster.var A \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see Details in \code{\link[multiwayvcov]{cluster}}. Applied only when \code{vcov.est=="cluster"}.)
+#' @param cluster.var A \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see Details in \code{\link[multiwayvcov]{cluster.vcov}}. Applied only when \code{vcov.est=="cluster"}.)
 #' @param iterate.num The number of iteration in simulation.
 #' @param iterate.seed The seed value for random number generator used for the draws from multivariate normal distribution.
 #' @param rawbeta The matrix of pre-simulated beta. Columns are variables, raws are simulated cases. Used only when \code{vcov.est=="rawbeta"}.
-#' @param ... Additional arguments passed to \code{\link[sandwich]{vcovHC}}, \code{\link[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}. 
+#' @param ... Additional arguments passed to \code{\link[sandwich]{vcovHC}}, \code{\link[multiwayvcov]{cluster.vcov}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}. 
 #' 
 #' @return A list of: 
 #' \itemize{

@@ -4,25 +4,50 @@
 \alias{table_coef}
 \title{Plotting Coefficients}
 \usage{
-table_coef(m, format = "screen", file.name = NULL, dir = NULL,
-  m.names = NULL, order.variable = "original", vcov.est = NULL,
-  robust.type = "HC1", cluster.var = NULL, boot.sims = 300,
-  boot.seed = 578, boot.ncores = 1, digits = 3,
-  drop.intercept = FALSE, drop.intercept.names = "(Intercept)",
-  drop.variable.names = NULL, caption = NULL,
-  custom.variable.names = NULL, footnote.psymbol = TRUE,
-  custom.footnote = NULL, show.table = TRUE, booktabs = TRUE,
-  dcolumn = FALSE, use.packages = FALSE, stars = c(0.001, 0.01, 0.05,
-  0.1), symbol = "dagger", caption.above = TRUE, single.row = FALSE,
-  float.pos = "ht!!", fontsize = "footnotesize",
-  include.deviance = FALSE, include.smooth = FALSE, ...)
+table_coef(
+  m,
+  format = "screen",
+  file.name = NULL,
+  dir = NULL,
+  m.names = NULL,
+  order.variable = "original",
+  vcov.est = NULL,
+  robust.type = "HC1",
+  cluster.var = NULL,
+  boot.sims = 300,
+  boot.seed = 578,
+  boot.ncores = 1,
+  digits = 3,
+  drop.intercept = FALSE,
+  drop.intercept.names = "(Intercept)",
+  drop.variable.names = NULL,
+  caption = NULL,
+  custom.variable.names = NULL,
+  footnote.psymbol = TRUE,
+  custom.footnote = NULL,
+  show.table = TRUE,
+  booktabs = TRUE,
+  dcolumn = FALSE,
+  use.packages = FALSE,
+  stars = c(0.001, 0.01, 0.05, 0.1),
+  symbol = "dagger",
+  caption.above = TRUE,
+  single.row = FALSE,
+  float.pos = "ht!!",
+  fontsize = "footnotesize",
+  encoding_from = NULL,
+  encoding_to = NULL,
+  include.deviance = FALSE,
+  include.smooth = FALSE,
+  ...
+)
 }
 \arguments{
 \item{m}{Single or the list of model object.}
 
 \item{format}{The format for the table output (characater). The default is \code{"screen"} (The R Output. Cannot be saved.). Other options are \code{"tex"} (LaTex table), \code{"html"} (HTML table) and \code{"doc"} (HTML table saved as Microsof Word file).}
 
-\item{file.name}{The name of the file to be saved (character). The default is \code{NULL} (The output not saved to file). Extension is automatically added, so do not include it.}
+\item{file.name}{The name of the file to be saved (character). The default is \code{NULL} (The output not saved to file). If extension is provided, it will automatically overwrite \code{format}.}
 
 \item{dir}{The directory of the file to be saved. Only applicable when file.name is not \code{NULL}.}
 
@@ -86,11 +111,15 @@ Ignored if \code{NULL} (default) or the \code{m} is not model object. Must have 
 
 \item{fontsize}{See \code{\link[texreg]{texreg}}.}
 
-\item{include.deviance}{See \code{\link[texreg]{texreg}}.}
+\item{encoding_from}{If encoding conversion is required, what is the orignal encoding? (Only used when \code{format=="tex"}.)}
 
-\item{include.smooth}{See \code{\link[texreg]{texreg}}.}
+\item{encoding_to}{If encoding conversion is required, what is the encoding to be coverted to? (Only used when \code{format=="tex"}.)}
 
-\item{...}{Other options in \code{texreg} function.}
+\item{include.deviance}{See \code{\link[texreg]{extract}}.}
+
+\item{include.smooth}{See \code{\link[texreg]{extract}}.}
+
+\item{...}{Other options in \code{\link[texreg]{texreg}} or \code{\link[texreg]{extract}} function.}
 }
 \value{
 Regression table to be shown in console if \code{format=="screen"} or \code{show.table==TRUE}, \code{NULL} if else.
@@ -114,9 +143,9 @@ vote92$w <- abs(rnorm(nrow(vote92)))
 
 ## Estimate Logistic Regression
 fm <- formula(voteBush ~ dem + rep +
-                clintondis + bushdis +
-                persfinance + natlecon)
-m <- glm(fm, data = vote92,
+               clintondis + bushdis +
+               persfinance + natlecon)
+m <- glm(fm, data = na.omit(vote92[,c(all.vars(fm),"w","perotdis")]),
          family = binomial("logit"), weights=w)
 
 ## Basic Table
@@ -132,7 +161,7 @@ table_coef(m, single.row = TRUE)
 table_coef(list(m,m,m,m), 
            m.names = c("Standard","Robust(HC1)","Cluster Robust","Bootstrapped"),
            vcov.est = list(NULL,"robust","cluster","boot"),
-           cluster.var = vote92$perotdis)
+           cluster.var = na.omit(vote92[,c(all.vars(fm),"w","perotdis")])$perotdis)
 
 ## Estimate Model by Male and Female Subset
 m_male <- glm(fm, data = vote92[vote92$female==0,],

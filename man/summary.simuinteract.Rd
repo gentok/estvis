@@ -4,8 +4,7 @@
 \alias{summary.simuinteract}
 \title{Summary Class for \code{simuinteract} Object}
 \usage{
-\method{summary}{simuinteract}(object, ..., digits = 3,
-  print.rows = 15)
+\method{summary}{simuinteract}(object, ..., digits = 3, print.rows = 15)
 }
 \arguments{
 \item{object}{\code{simuinteract} object}

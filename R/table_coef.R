@@ -7,20 +7,20 @@
 #' ## Load Data
 #' library(pscl)
 #' data(vote92)
-#' 
+#'
 #' ## Recode Variables
 #' vote92$voteBush <- as.numeric(
 #'   factor(vote92$vote,levels=c("Clinton","Bush")))*1 - 1
 #' vote92$bushdis <- sqrt(vote92$bushdis)
 #' vote92$clintondis <- sqrt(vote92$clintondis)
-#' 
+#'
 #' vote92$w <- abs(rnorm(nrow(vote92)))
-#' 
+#'
 #' ## Estimate Logistic Regression
 #' fm <- formula(voteBush ~ dem + rep +
-#'                 clintondis + bushdis +
-#'                 persfinance + natlecon)
-#' m <- glm(fm, data = vote92,
+#'                clintondis + bushdis +
+#'                persfinance + natlecon)
+#' m <- glm(fm, data = na.omit(vote92[,c(all.vars(fm),"w","perotdis")]),
 #'          family = binomial("logit"), weights=w)
 #' 
 #' ## Basic Table
@@ -36,7 +36,7 @@
 #' table_coef(list(m,m,m,m), 
 #'            m.names = c("Standard","Robust(HC1)","Cluster Robust","Bootstrapped"),
 #'            vcov.est = list(NULL,"robust","cluster","boot"),
-#'            cluster.var = vote92$perotdis)
+#'            cluster.var = na.omit(vote92[,c(all.vars(fm),"w","perotdis")])$perotdis)
 #' 
 #' ## Estimate Model by Male and Female Subset
 #' m_male <- glm(fm, data = vote92[vote92$female==0,],
@@ -91,7 +91,7 @@
 #' 
 #' @param m Single or the list of model object.
 #' @param format The format for the table output (characater). The default is \code{"screen"} (The R Output. Cannot be saved.). Other options are \code{"tex"} (LaTex table), \code{"html"} (HTML table) and \code{"doc"} (HTML table saved as Microsof Word file).
-#' @param file.name The name of the file to be saved (character). The default is \code{NULL} (The output not saved to file). Extension is automatically added, so do not include it.
+#' @param file.name The name of the file to be saved (character). The default is \code{NULL} (The output not saved to file). If extension is provided, it will automatically overwrite \code{format}.
 #' @param dir The directory of the file to be saved. Only applicable when file.name is not \code{NULL}.
 #' @param m.names The set of names that identifies each element in \code{m}. Considered if \code{m} is a list of models. The length of the vector must correspond with the length of \code{m}. If \code{NULL} (default), each element \code{i} is temporarily named as \code{Model i}.
 #' @param order.variable Order of coefficients in the plot(character/numeric vector). 
@@ -127,9 +127,11 @@
 #' @param single.row See \code{\link[texreg]{texreg}}.
 #' @param float.pos See \code{\link[texreg]{texreg}}.
 #' @param fontsize See \code{\link[texreg]{texreg}}.
-#' @param include.deviance See \code{\link[texreg]{texreg}}.
-#' @param include.smooth See \code{\link[texreg]{texreg}}.
-#' @param ... Other options in \code{texreg} function.
+#' @param encoding_from If encoding conversion is required, what is the orignal encoding? (Only used when \code{format=="tex"}.)
+#' @param encoding_to If encoding conversion is required, what is the encoding to be coverted to? (Only used when \code{format=="tex"}.) 
+#' @param include.deviance See \code{\link[texreg]{extract}}.
+#' @param include.smooth See \code{\link[texreg]{extract}}.
+#' @param ... Other options in \code{\link[texreg]{texreg}} or \code{\link[texreg]{extract}} function.
 #'
 #' @importFrom lmtest coeftest
 #' @importFrom texreg texreg
@@ -170,6 +172,9 @@ table_coef<-function(m,
                     single.row = FALSE,
                     float.pos = "ht!!",
                     fontsize = "footnotesize",
+                    # If encoding conversion is required (only tex)
+                    encoding_from = NULL,
+                    encoding_to = NULL,
                     # Other settings for extract method
                     include.deviance = FALSE,
                     include.smooth = FALSE,
@@ -280,6 +285,22 @@ table_coef<-function(m,
     }
   }
   
+  # Override File Format if Extension is Already Provided
+  if (!is.null(file.name)) {
+    if(grepl("\\.tex$", file.name)) {
+      file.name <- gsub("\\.tex$","", file.name)
+      format <- "tex"
+    }
+    if(grepl("\\.html$", file.name)) {
+      file.name <- gsub("\\.html$","", file.name)
+      format <- "html"
+    }
+    if(grepl("\\.doc$", file.name)) {
+      file.name <- gsub("\\.doc$","", file.name)
+      format <- "doc"
+    }
+  }
+
   # File paths
   if (is.null(file.name) == FALSE){
     if (is.null(dir) == FALSE) {
@@ -407,6 +428,21 @@ table_coef<-function(m,
            fontsize = fontsize,
            stars = stars,
            symbol = symbol.tex, ...)
+    if (!is.null(filepath)) {
+      if (symbol=="dagger"|(!is.null(encoding_from)&!is.null(encoding_to))) {
+        tmp <- readLines(filepath)
+        if (symbol=="dagger") {
+          tmp <- sub("\\{dagger", "{\\\\\ dagger", tmp)
+          tmp <- sub(" dagger", 'dagger',  tmp)
+        }
+        if (!is.null(encoding_from)&!is.null(encoding_to)) {
+          tmp <- iconv(tmp, from=encoding_from, to=encoding_to)
+          writeLines(tmp, filepath, useBytes=TRUE)
+        } else {
+          writeLines(tmp, filepath)
+        }
+      }
+    }
   } else if (format %in% c("html","doc")) {
     if (is.null(caption)==TRUE) caption <- "No Title"
     htmlreg(m,

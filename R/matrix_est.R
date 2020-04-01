@@ -73,12 +73,12 @@ matrix_coefci <- function(m,
 #' If \code{"boot"}, bootstrapped standard error calculated by \code{\link[car]{Boot}} function is used.
 #' Ignored if \code{NULL} (default) or the \code{m} is not model object. Must have the same length as \code{m} if it is a list.
 #' @param robust.type The type of robust standard error (applied only when \code{vcov.est=="robust"}).
-#' @param cluster.var A \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see Details in \code{[multiwayvcov]{cluster}}. Applied only when \code{vcov.est=="cluster"}.)
+#' @param cluster.var A \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see Details in \code{[multiwayvcov]{cluster.vcov}}. Applied only when \code{vcov.est=="cluster"}.)
 #' @param boot.sims Number of iterations if bootstrap is used. 
 #' @param boot.seed Random number seed if bootstrap method is used.
 #' @param ncores Number of cores to be used in bootstrap. If \code{"auto"}, automatically detects number of cores in computer.
 #' @param seed Random number seed.
-#' @param ... Additional arguments passed to \code{[sandwich]{vcovHC}}, \code{[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}. 
+#' @param ... Additional arguments passed to \code{[sandwich]{vcovHC}}, \code{[multiwayvcov]{cluster.vcov}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}. 
 #' 
 #'
 #' @importFrom lmtest coeftest

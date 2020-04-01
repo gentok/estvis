@@ -4,9 +4,16 @@
 \alias{matrix_coeftest}
 \title{Export Matrix (Data.Frame) of Coefficients Test}
 \usage{
-matrix_coeftest(m, vcov.est = NULL, robust.type = "HC1",
-  cluster.var = NULL, boot.sims = 500, boot.seed = 578,
-  ncores = "auto", ...)
+matrix_coeftest(
+  m,
+  vcov.est = NULL,
+  robust.type = "HC1",
+  cluster.var = NULL,
+  boot.sims = 500,
+  boot.seed = 578,
+  ncores = "auto",
+  ...
+)
 }
 \arguments{
 \item{m}{A single model object.}
@@ -19,7 +26,7 @@ Ignored if \code{NULL} (default) or the \code{m} is not model object. Must have 
 
 \item{robust.type}{The type of robust standard error (applied only when \code{vcov.est=="robust"}).}
 
-\item{cluster.var}{A \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see Details in \code{[multiwayvcov]{cluster}}. Applied only when \code{vcov.est=="cluster"}.)}
+\item{cluster.var}{A \code{vector}, \code{matrix}, or \code{data.frame} of cluster variables, where each column is a separate variable. Alternatively, a formula specifying the cluster variables to be used (see Details in \code{[multiwayvcov]{cluster.vcov}}. Applied only when \code{vcov.est=="cluster"}.)}
 
 \item{boot.sims}{Number of iterations if bootstrap is used.}
 
@@ -27,7 +34,7 @@ Ignored if \code{NULL} (default) or the \code{m} is not model object. Must have 
 
 \item{ncores}{Number of cores to be used in bootstrap. If \code{"auto"}, automatically detects number of cores in computer.}
 
-\item{...}{Additional arguments passed to \code{[sandwich]{vcovHC}}, \code{[multiwayvcov]{cluster}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}.}
+\item{...}{Additional arguments passed to \code{[sandwich]{vcovHC}}, \code{[multiwayvcov]{cluster.vcov}}, or \code{\link[car]{Boot}} depending on the value of \code{vcov.est}.}
 
 \item{seed}{Random number seed.}
 }
